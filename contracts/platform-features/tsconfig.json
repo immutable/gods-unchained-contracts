@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "../js/src"
+  },
+  "include": [
+    "src",
+    "__tests__"
+  ],
+  "exclude": [
+    "node_modules",
+    "node_modules/gods-unchained"
+  ]
+}
