@@ -1,6 +1,6 @@
 pragma solidity ^0.5.11;
 
-contract SeasonCore {
+contract SeasonManager {
 
     enum Status {
         Purchased,

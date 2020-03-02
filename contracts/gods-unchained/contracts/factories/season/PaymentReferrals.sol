@@ -11,7 +11,7 @@ contract PaymentReferrals {
         uint256 percentage
     );
 
-    constructor(uint256 splitLimit) public {
+    constructor(uint256 _splitLimit) public {
 
     }
 

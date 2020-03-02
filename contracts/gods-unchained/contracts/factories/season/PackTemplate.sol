@@ -1,11 +1,11 @@
 pragma solidity ^0.5.11;
 
-import "./SeasonCore.sol";
+import "./SeasonManager.sol";
 
-contract SeasonPack {
+contract PackTemplate {
 
     // Access to core functions
-    SeasonCore public core;
+    SeasonManager public manager;
 
     // Limit how many cards can be sold
     uint256 public SALE_CAP;
@@ -13,12 +13,12 @@ contract SeasonPack {
     event PackPurchased();
 
     constructor(
-        address _seasonCoreAddress,
+        address _seasonManagerAddress,
         uint256 _saleCap
     )
         public
     {
-        core = SeasonCore(_seasonCoreAddress);
+        manager = SeasonManager(_seasonManagerAddress);
         SALE_CAP = _saleCap;
     }
 

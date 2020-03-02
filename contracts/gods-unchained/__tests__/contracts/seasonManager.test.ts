@@ -2,8 +2,8 @@ import 'jest';
 
 import { Address } from '@imtbl/common-types';
 import { parseLogs } from '@imtbl/utils';
-import { SeasonCoreFactory } from './../../src/generated/SeasonCoreFactory';
-import { SeasonCore } from './../../src/generated/SeasonCore';
+import { SeasonManagerFactory } from '../../src/generated/SeasonManagerFactory';
+import { SeasonCore } from '../../src/generated/SeasonCore';
 import { JsonRpcProvider } from 'ethers/providers';
 import { generatedWallets, expectRevert } from '@imtbl/test-utils';
 import { ethers, Wallet } from 'ethers';
@@ -25,12 +25,12 @@ describe('SeasonCore', () => {
       callerTotalProtos = 10;
       callerStartProto = 1;
 
-      const seasonCore = await new SeasonCoreFactory(ownerWallet).deploy();
+      const seasonCore = await new SeasonManagerFactory(ownerWallet).deploy();
       seasonCoreAddress = seasonCore.address;
     });
 
     async function subject() {
-      const seasonCore = await new SeasonCoreFactory(caller).attach(seasonCoreAddress);
+      const seasonCore = await new SeasonManagerFactory(caller).attach(seasonCoreAddress);
       const tx = await seasonCore.functions.createSeason(callerTotalProtos, callerStartProto);
       return await tx.wait();
     }
@@ -52,7 +52,7 @@ describe('SeasonCore', () => {
 
     it('should be able to create a new season and emit the correct event', async () => {
       const receipt = await subject();
-      const parsed = parseLogs(receipt.logs, new SeasonCoreFactory().interface.abi);
+      const parsed = parseLogs(receipt.logs, new SeasonManagerFactory().interface.abi);
       // TODO: Check event emitted correctly
     });
   });
@@ -75,13 +75,13 @@ describe('SeasonCore', () => {
       callerChestAddress = ethers.constants.AddressZero;
       callerPackAddress = ethers.constants.AddressZero;
 
-      const seasonCore = await new SeasonCoreFactory(ownerWallet).deploy();
+      const seasonCore = await new SeasonManagerFactory(ownerWallet).deploy();
       await seasonCore.functions.createSeason(10, 1);
       seasonCoreAddress = seasonCore.address;
     });
 
     async function subject() {
-      const seasonCore = await new SeasonCoreFactory(caller).attach(seasonCoreAddress);
+      const seasonCore = await new SeasonManagerFactory(caller).attach(seasonCoreAddress);
       const tx = await seasonCore.functions.createPack(
         callerSeason,
         callerName,
@@ -126,7 +126,7 @@ describe('SeasonCore', () => {
       callerLockUp = 0;
       callerUser = userWallet.address;
 
-      const seasonCore = await new SeasonCoreFactory(ownerWallet).deploy();
+      const seasonCore = await new SeasonManagerFactory(ownerWallet).deploy();
       seasonCoreAddress = seasonCore.address;
       await seasonCore.functions.createSeason(10, 1);
       await seasonCore.functions.createPack(
@@ -140,7 +140,7 @@ describe('SeasonCore', () => {
     });
 
     async function subject() {
-      const seasonCore = await new SeasonCoreFactory(caller).attach(seasonCoreAddress);
+      const seasonCore = await new SeasonManagerFactory(caller).attach(seasonCoreAddress);
       const tx = await seasonCore.functions.packRedeemed(
         callerSeason,
         callerPackId,
@@ -179,7 +179,7 @@ describe('SeasonCore', () => {
     it('should be able to redeem a pack', async () => {
       const receipt = await subject();
       const purchaseId = 1; // TODO: Make this real
-      const seasonCore = await new SeasonCoreFactory(userWallet).attach(seasonCoreAddress);
+      const seasonCore = await new SeasonManagerFactory(userWallet).attach(seasonCoreAddress);
       const purchaseData = await seasonCore.functions.purchases(purchaseId);
     });
   });
@@ -196,7 +196,7 @@ describe('SeasonCore', () => {
       callerPurchaseId = 0;
       callerFastForwardBlocks = 0;
 
-      const seasonCore = await new SeasonCoreFactory(ownerWallet).deploy();
+      const seasonCore = await new SeasonManagerFactory(ownerWallet).deploy();
       seasonCoreAddress = seasonCore.address;
       await seasonCore.functions.createSeason(10, 1);
       await seasonCore.functions.createPack(
@@ -211,7 +211,7 @@ describe('SeasonCore', () => {
     });
 
     async function subject() {
-      const seasonCore = await new SeasonCoreFactory(caller).attach(seasonCoreAddress);
+      const seasonCore = await new SeasonManagerFactory(caller).attach(seasonCoreAddress);
       const tx = await seasonCore.functions.commitPackRandomness(callerPurchaseId);
       return await tx.wait();
     }

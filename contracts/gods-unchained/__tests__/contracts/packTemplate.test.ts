@@ -1,11 +1,11 @@
-import { SeasonCoreFactory } from './../../src/generated/SeasonCoreFactory';
 import 'jest';
 
 import { JsonRpcProvider } from 'ethers/providers';
 import { generatedWallets } from '@imtbl/test-utils';
-import { SeasonPackFactory } from './../../src/generated/SeasonPackFactory';
-import { SeasonPack } from './../../src/generated/SeasonPack';
+import { PackTemplateFactory } from '../../src/generated/PackTemplateFactory';
+import { SeasonPack } from '../../src/generated/SeasonPack';
 import { ethers, Wallet } from 'ethers';
+import { SeasonManagerFactory } from './../../src/generated/SeasonManagerFactory';
 
 const provider = new ethers.providers.JsonRpcProvider();
 
@@ -14,9 +14,9 @@ describe('SeasonPack', () => {
 
   describe('#constructor', () => {
     it('should set the correct variables', async () => {
-      const seasonPack = await new SeasonPackFactory().deploy(ethers.constants.AddressZero, 2);
+      const seasonPack = await new PackTemplateFactory().deploy(ethers.constants.AddressZero, 2);
 
-      const coreAddress = await seasonPack.functions.core();
+      const coreAddress = await seasonPack.functions.manager();
       expect(coreAddress).toEqual(ethers.constants.AddressZero);
 
       const saleCap = await seasonPack.functions.SALE_CAP();
@@ -34,8 +34,8 @@ describe('SeasonPack', () => {
       caller = userWallet;
       callerSaleCap = 2;
 
-      const seasonCore = await new SeasonCoreFactory(ownerWallet).deploy();
-      const seasonPack = await new SeasonPackFactory(ownerWallet).deploy(
+      const seasonCore = await new SeasonManagerFactory(ownerWallet).deploy();
+      const seasonPack = await new PackTemplateFactory(ownerWallet).deploy(
         seasonCore.address,
         callerSaleCap,
       );

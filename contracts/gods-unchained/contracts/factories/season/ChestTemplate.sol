@@ -1,11 +1,11 @@
 pragma solidity ^0.5.11;
 
-import "./SeasonCore.sol";
+import "./SeasonManager.sol";
 
-contract SeasonChest {
+contract ChestTemplate {
 
     // Access to core functions
-    SeasonCore private core;
+    SeasonManager public manager;
 
     // Limit how many to be sold
     uint256 public SALE_CAP;
@@ -13,6 +13,16 @@ contract SeasonChest {
     event ChestPurchased();
 
     event ChestOpened();
+
+    constructor(
+        address _seasonManagerAddress,
+        uint256 _saleCap
+    )
+        public
+    {
+        manager = SeasonManager(_seasonManagerAddress);
+        SALE_CAP = _saleCap;
+    }
 
     /**
      * @dev Purchase a chest of packs.
