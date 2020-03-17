@@ -22,8 +22,16 @@ export class Blockchain {
     await this.sendJSONRpcRequestAsync('evm_increaseTime', [duration.toNumber()]);
   }
 
+  public async waitBlocksAsync(count: number): Promise<any> {
+    for (let i = 0; i < count; i++) {
+      await this.sendJSONRpcRequestAsync('evm_mine', []);
+    }
+  }
+
   private async sendJSONRpcRequestAsync(method: string, params: any[]): Promise<any> {
     const jsonProvider: JsonRpcProvider = new ethers.providers.JsonRpcProvider();
     return jsonProvider.send(method, params);
   }
+
+
 }

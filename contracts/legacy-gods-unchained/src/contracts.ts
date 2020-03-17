@@ -45,8 +45,6 @@ export { OwnableFactory } from './generated/OwnableFactory';
 export { PackFiveFactory } from './generated/PackFiveFactory';
 export { PresalePackFourFactory } from './generated/PresalePackFourFactory';
 export { ProcessorFactory } from './generated/ProcessorFactory';
-export { PromoFactory } from './generated/PromoFactory';
-export { PromoFactoryFactory } from './generated/PromoFactoryFactory';
 export { RarePackFourFactory } from './generated/RarePackFourFactory';
 export { RarityProviderFactory } from './generated/RarityProviderFactory';
 export { ReferralsFactory } from './generated/ReferralsFactory';

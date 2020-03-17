@@ -10,7 +10,7 @@
         "delete:node_modules": "find . -name \"node_modules\" -exec rm -rf '{}' +",
         "delete:dist": "find . -name \"dist\" -exec rm -rf '{}' +",
         "delete:yarn.lock": "find . -name \"yarn.lock\" -exec rm -rf '{}' +",
-        "chain": "ganache-cli --networkId 50 --accounts 20 -l 19000000 -e 10000000000 -m 'concert load couple harbor equip island argue ramp clarify fence smart topic' --db snapshots/0x/",
+        "chain": "ganache-cli --networkId 50 --accounts 20 -l 19000000 -e 10000000000 -m 'concert load couple harbor equip island argue ramp clarify fence smart topic'",
         "lint": "yarn lerna run lint",
         "build:gods-unchained": "yarn --cwd contracts/gods-unchained build",
         "build:legacy-gods-unchained": "yarn --cwd contracts/legacy-gods-unchained build",

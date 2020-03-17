@@ -1,0 +1,18 @@
+{
+  "extends": [
+    "tslint-config-airbnb",
+    "tslint-no-focused-test"
+  ],
+  "rules": {
+    "import-name": false,
+    "trailing-comma": false,
+    "ter-arrow-parens": false,
+    "no-increment-decrement": false,
+    "variable-name": [
+      true,
+      "allow-pascal-case",
+      "ban-keywords"
+    ],
+    "no-focused-test": true
+  }
+}

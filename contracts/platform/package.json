@@ -1,0 +1,59 @@
+{
+  "name": "@imtbl/platform",
+  "version": "1.0.11",
+  "description": "Solidity smart contracts for the Immutable platform.",
+  "main": "dist/src/index.js",
+  "typings": "dist/src/index.d.ts",
+  "files": [
+    "contracts/**/**.sol",
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rm -rf build; rm -rf dist; rm -rf generated; rm -rf ../artifacts/src",
+    "lint:sol": "yarn solhint \"contracts/**/*.sol\" --config solhint.json",
+    "lint:ts": "tslint -t verbose '__tests__/**/*.ts'",
+    "lint": "yarn lint:ts && yarn lint:sol",
+    "generate-typings": "node scripts/generate-typings.js",
+    "build": "yarn lint:sol && yarn truffle compile --all && yarn generate-typings && yarn tsc",
+    "deploy": "yarn ts-node deployment/deploy.ts",
+    "test": "yarn build && yarn reset-test-evm && yarn jest __tests__ --runInBand",
+    "test:watch": "yarn reset-test-evm && yarn jest __tests__ --runInBand --watch",
+    "reset-test-evm": "node scripts/reset-test-evm.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@imtbl/addresses": "^1.0.10",
+    "@imtbl/common-types": "^1.0.10",
+    "@imtbl/deployment-utils": "^1.0.10",
+    "@imtbl/gods-unchained": "^1.0.10",
+    "@imtbl/utils": "^1.0.10",
+    "@openzeppelin/contracts": "^2.3.0",
+    "dotenv": "^8.2.0",
+    "ethers": "4.0.42",
+    "minimist": "^1.2.0",
+    "truffle-plugin-verify": "^0.3.9",
+    "typescript": "^3.7.5"
+  },
+  "devDependencies": {
+    "@0xproject/types": "^1.1.4",
+    "@imtbl/test-utils": "^1.0.11",
+    "@types/jest": "^24.0.21",
+    "@types/node": "^12.12.3",
+    "fs-readdir-recursive": "^1.1.0",
+    "jest": "^24.9.0",
+    "mustache": "^3.1.0",
+    "recursive-readdir": "^2.2.2",
+    "replace-in-file": "^4.2.0",
+    "solhint": "^2.3.0",
+    "truffle": "^5.0.42",
+    "ts-generator": "^0.0.8",
+    "ts-jest": "^24.1.0",
+    "ts-node": "^8.4.1",
+    "tslint": "^5.20.1",
+    "tslint-config-airbnb": "^5.11.2",
+    "tslint-no-focused-test": "^0.5.0",
+    "typechain": "^0.3.19"
+  },
+  "gitHead": "9e32f674f909b02f9e177ca4319f06de8664b157"
+}
