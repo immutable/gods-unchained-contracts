@@ -4,6 +4,11 @@ import "./GenericAsset.sol";
 
 contract RaffleItem is GenericAsset {
 
+    event RaffleItemMinted(
+        uint256 tokenId,
+        address owner
+    );
+
     constructor(
         string memory _name,
         string memory _ticker
@@ -46,6 +51,8 @@ contract RaffleItem is GenericAsset {
 
         uint256 newItemId = _tokenIds.current();
         _mint(_to, newItemId);
+
+        emit RaffleItemMinted(newItemId, _to);
 
         return newItemId;
     }

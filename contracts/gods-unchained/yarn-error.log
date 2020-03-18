@@ -1,14 +1,14 @@
 Arguments: 
-  /Users/kermankohli/.nvm/versions/node/v11.15.0/bin/node /usr/local/Cellar/yarn/1.17.3/libexec/bin/yarn.js install --mutex network:42424 --non-interactive
+  /usr/local/Cellar/node/12.6.0/bin/node /usr/local/Cellar/yarn/1.17.3/libexec/bin/yarn.js add yargs
 
 PATH: 
-  /Users/kermankohli/immutable/gods-unchained-contracts/contracts/gods-unchained/node_modules/.bin:/Users/kermankohli/immutable/gods-unchained-contracts/contracts/node_modules/.bin:/Users/kermankohli/immutable/gods-unchained-contracts/node_modules/.bin:/Users/kermankohli/immutable/node_modules/.bin:/Users/kermankohli/node_modules/.bin:/Users/node_modules/.bin:/node_modules/.bin:/Users/kermankohli/.nvm/versions/node/v11.15.0/bin:/Users/kermankohli/.nvm/versions/node/v11.15.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 
 Yarn version: 
   1.17.3
 
 Node version: 
-  11.15.0
+  12.6.0
 
 Platform: 
   darwin x64
@@ -17,61 +17,78 @@ Trace:
   Error: https://registry.yarnpkg.com/@imtbl%2fdeployment-utils: Not found
       at Request.params.callback [as _callback] (/usr/local/Cellar/yarn/1.17.3/libexec/lib/cli.js:66830:18)
       at Request.self.callback (/usr/local/Cellar/yarn/1.17.3/libexec/lib/cli.js:140464:22)
-      at Request.emit (events.js:193:13)
+      at Request.emit (events.js:203:13)
       at Request.<anonymous> (/usr/local/Cellar/yarn/1.17.3/libexec/lib/cli.js:141436:10)
-      at Request.emit (events.js:193:13)
+      at Request.emit (events.js:203:13)
       at IncomingMessage.<anonymous> (/usr/local/Cellar/yarn/1.17.3/libexec/lib/cli.js:141358:12)
-      at Object.onceWrapper (events.js:281:20)
-      at IncomingMessage.emit (events.js:198:15)
-      at endReadableNT (_stream_readable.js:1139:12)
-      at processTicksAndRejections (internal/process/task_queues.js:81:17)
+      at Object.onceWrapper (events.js:291:20)
+      at IncomingMessage.emit (events.js:208:15)
+      at endReadableNT (_stream_readable.js:1154:12)
+      at processTicksAndRejections (internal/process/task_queues.js:77:11)
 
 npm manifest: 
   {
-  	"name": "@imtbl/gods-unchained",
-  	"version": "1.0.11",
-  	"description": "Solidity smart contracts for Gods Unchained.",
-  	"main": "dist/src/index.js",
-  	"typings": "dist/src/index.d.ts",
-  	"files": [
-  		"contracts/**/**.sol",
-  		"dist"
-  	],
-  	"author": "",
-  	"license": "MIT",
-  	"dependencies": {
-  		"@0x/contracts-exchange-libs": "^3.0.8",
-  		"@0x/order-utils": "^8.4.0",
-  		"@imtbl/deployment-utils": "1.0.10",
-  		"@imtbl/types": "1.0.10",
-  		"@openzeppelin/contracts": "^2.3.0",
-  		"ethers": "4.0.42",
-  		"minimist": "^1.2.0",
-  		"save": "^2.4.0",
-  		"typescript": "^3.7.5"
-  	},
-  	"devDependencies": {
-  		"@types/jest": "^24.0.21",
-  		"@types/node": "^12.12.3",
-  		"dotenv": "^8.2.0",
-  		"fs-readdir-recursive": "^1.1.0",
-  		"jest": "^24.9.0",
-  		"mustache": "^3.1.0",
-  		"recursive-readdir": "^2.2.2",
-  		"replace-in-file": "^4.2.0",
-  		"solhint": "^2.3.0",
-  		"truffle": "^5.0.42",
-  		"truffle-flattener": "^1.4.2",
-  		"truffle-plugin-verify": "^0.3.5",
-  		"ts-generator": "^0.0.8",
-  		"ts-jest": "^24.1.0",
-  		"ts-node": "^8.4.1",
-  		"tslint": "^5.20.1",
-  		"tslint-config-airbnb": "^5.11.2",
-  		"tslint-no-focused-test": "^0.5.0",
-  		"typechain": "^0.3.19"
-  	},
-  	"gitHead": "9e32f674f909b02f9e177ca4319f06de8664b157"
+    "name": "@imtbl/gods-unchained",
+    "version": "1.0.11",
+    "description": "Solidity smart contracts for Gods Unchained.",
+    "main": "dist/src/index.js",
+    "typings": "dist/src/index.d.ts",
+    "files": [
+      "contracts/**/**.sol",
+      "dist"
+    ],
+    "scripts": {
+      "clean": "rm -rf build; rm -rf dist; rm -rf ../types/src/generated; rm -rf ../artifacts/src",
+      "lint:sol": "yarn solhint \"contracts/**/*.sol\" --config solhint.json",
+      "lint:ts": "tslint -t verbose '__tests__/**/*.ts'",
+      "lint": "yarn lint:ts && yarn lint:sol",
+      "generate-typings": "node scripts/generate-typings.js",
+      "build": "yarn lint:sol && yarn truffle compile --all && yarn generate-typings && yarn tsc",
+      "deploy": "yarn ts-node deployment/deploy.ts",
+      "test": "yarn build && yarn reset-test-evm && yarn jest __tests__/core --runInBand",
+      "test:watch": "yarn reset-test-evm && yarn jest __tests__/core --runInBand --watch",
+      "reset-test-evm": "node scripts/reset-test-evm.js",
+      "verify": "node scripts/verify-contracts.js"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+      "@0x/contracts-exchange-libs": "^3.0.8",
+      "@0x/order-utils": "^8.4.0",
+      "@imtbl/common-types": "^1.0.10",
+      "@imtbl/deployment-utils": "1.0.13",
+      "@imtbl/types": "1.0.10",
+      "@imtbl/utils": "^1.0.10",
+      "@openzeppelin/contracts": "^2.3.0",
+      "ethers": "4.0.42",
+      "minimist": "^1.2.0",
+      "save": "^2.4.0",
+      "typescript": "^3.7.5"
+    },
+    "devDependencies": {
+      "@imtbl/addresses": "^1.0.11",
+      "@imtbl/test-utils": "1.0.10",
+      "@types/jest": "^24.0.21",
+      "@types/node": "^12.12.3",
+      "dotenv": "^8.2.0",
+      "fs-readdir-recursive": "^1.1.0",
+      "jest": "^24.9.0",
+      "mustache": "^3.1.0",
+      "recursive-readdir": "^2.2.2",
+      "replace-in-file": "^4.2.0",
+      "solhint": "^2.3.0",
+      "truffle": "^5.0.42",
+      "truffle-flattener": "^1.4.2",
+      "truffle-plugin-verify": "^0.3.5",
+      "ts-generator": "^0.0.8",
+      "ts-jest": "^24.1.0",
+      "ts-node": "^8.4.1",
+      "tslint": "^5.20.1",
+      "tslint-config-airbnb": "^5.11.2",
+      "tslint-no-focused-test": "^0.5.0",
+      "typechain": "^0.3.19"
+    },
+    "gitHead": "9e32f674f909b02f9e177ca4319f06de8664b157"
   }
 
 yarn manifest: 
@@ -407,10 +424,12 @@ Lockfile:
       reflect-metadata "^0.1.12"
       tslib "^1.8.1"
   
-  "@imtbl/types@file:../../packages/common-types":
-    version "1.0.11"
+  "@imtbl/types@1.0.10":
+    version "1.0.10"
+    resolved "https://registry.yarnpkg.com/@imtbl/types/-/types-1.0.10.tgz#f27f932370aa94658224e2753ddfd77b89638e6d"
+    integrity sha512-j9pz5XrXdcfYysWNBJp5FVutCQfUD8OXwdpQsqs5+K8PLf9z3LjSB1/jQe6ljMKB5IEwjVqFeP29fO0DPwqQHA==
     dependencies:
-      typescript "^3.7.5"
+      typescript "^3.5.3"
   
   "@jest/console@^24.7.1", "@jest/console@^24.9.0":
     version "24.9.0"
@@ -5522,7 +5541,7 @@ Lockfile:
       fs-extra "^7.0.0"
       ts-generator "^0.0.8"
   
-  typescript@^3.7.5:
+  typescript@^3.5.3, typescript@^3.7.5:
     version "3.7.5"
     resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.5.tgz#0692e21f65fd4108b9330238aac11dd2e177a1ae"
     integrity sha512-/P5lkRXkWHNAbcJIiHPfRoKqyd7bsyCma1hZNUGfn20qm64T6ZBlrzprymeu918H+mB/0rIg2gGK/BXkhhYgBw==

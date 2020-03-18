@@ -4,7 +4,13 @@ import "./GenericAsset.sol";
 
 contract HydraTrinket is GenericAsset {
 
-    mapping (uint256 => uint8) public headsToHydra;
+    mapping (uint256 => uint8) public hydraToHeads;
+
+    event HydraMinted(
+        uint256 id,
+        address owner,
+        uint8 heads
+    );
 
     constructor(
         string memory _name,
@@ -52,7 +58,9 @@ contract HydraTrinket is GenericAsset {
 
         uint256 newItemId = _tokenIds.current();
         _mint(_to, newItemId);
-        headsToHydra[newItemId] = _heads;
+        hydraToHeads[newItemId] = _heads;
+
+        emit HydraMinted(newItemId, _to, _heads);
 
         return newItemId;
     }
@@ -69,6 +77,6 @@ contract HydraTrinket is GenericAsset {
         view
         returns (uint8)
     {
-        return headsToHydra[_tokenId];
+        return hydraToHeads[_tokenId];
     }
 }

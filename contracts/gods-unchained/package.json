@@ -18,7 +18,8 @@
     "deploy": "yarn ts-node deployment/deploy.ts",
     "test": "yarn build && yarn reset-test-evm && yarn jest __tests__/core --runInBand",
     "test:watch": "yarn reset-test-evm && yarn jest __tests__/core --runInBand --watch",
-    "reset-test-evm": "node scripts/reset-test-evm.js"
+    "reset-test-evm": "node scripts/reset-test-evm.js",
+    "verify": "node scripts/verify-contracts.js"
   },
   "author": "",
   "license": "MIT",
@@ -33,7 +34,8 @@
     "ethers": "4.0.42",
     "minimist": "^1.2.0",
     "save": "^2.4.0",
-    "typescript": "^3.7.5"
+    "typescript": "^3.7.5",
+    "yargs": "^15.3.0"
   },
   "devDependencies": {
     "@imtbl/addresses": "^1.0.11",

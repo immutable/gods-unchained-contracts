@@ -43,6 +43,7 @@ export { S3PromoFactoryFactory } from './generated/S3PromoFactoryFactory';
 export { SeasonChestFactory } from './generated/SeasonChestFactory';
 export { SeasonCoreFactory } from './generated/SeasonCoreFactory';
 export { SeasonPackFactory } from './generated/SeasonPackFactory';
+export { TestFactory } from './generated/TestFactory';
 export { WETH9Factory } from './generated/WETH9Factory';
 
 export { BatchToken } from './generated/BatchToken';
@@ -80,4 +81,5 @@ export { RaffleItem } from './generated/RaffleItem';
 export { SeasonChest } from './generated/SeasonChest';
 export { SeasonCore } from './generated/SeasonCore';
 export { SeasonPack } from './generated/SeasonPack';
+export { Test } from './generated/Test';
 export { WETH9 } from './generated/WETH9';

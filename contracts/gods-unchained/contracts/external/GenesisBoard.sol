@@ -4,7 +4,7 @@ import "./GenericAsset.sol";
 
 contract GenesisBoard is GenericAsset {
 
-    mapping (uint256 => uint8) public levelToBoard;
+    mapping (uint256 => uint8) public boardToLevel;
 
     event GenesisBoardMinted(
         uint256 tokenId,
@@ -58,7 +58,7 @@ contract GenesisBoard is GenericAsset {
 
         uint256 newItemId = _tokenIds.current();
         _mint(_to, newItemId);
-        levelToBoard[newItemId] = _level;
+        boardToLevel[newItemId] = _level;
 
         emit GenesisBoardMinted(newItemId, _to, _level);
 
@@ -77,6 +77,6 @@ contract GenesisBoard is GenericAsset {
         view
         returns (uint8)
     {
-        return levelToBoard[_tokenId];
+        return boardToLevel[_tokenId];
     }
 }

@@ -85,19 +85,20 @@ contract GenericAsset is ERC721Full, Ownable {
      * @param to The recipient of the card to send to
      * @param tokenId The id of the card you'd like to transfer
      */
-    function transferFrom(
+    function _transferFrom(
         address from,
         address to,
         uint256 tokenId
     )
-        public
+        internal
+
     {
         require(
             isTradable == true,
             "Generic Asset: not yet tradable"
         );
 
-        super.transferFrom(from, to, tokenId);
+        super._transferFrom(from, to, tokenId);
     }
 
     /**
