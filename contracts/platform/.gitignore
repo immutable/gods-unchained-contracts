@@ -1,6 +1,6 @@
 old
 secrets.json
 .etherlime-store
-src/generated
+src/contracts
 node_modules
 build

@@ -1,7 +1,7 @@
 import 'jest';
 
 import { Blockchain, expectRevert, generatedWallets } from '@imtbl/test-utils';
-import { Cards, CardsFactory, Forge, ForgeFactory } from '../../src';
+import { Cards, Forge } from '../../src/contracts';
 import { Wallet, ethers } from 'ethers';
 
 const provider = new ethers.providers.JsonRpcProvider();
@@ -31,19 +31,19 @@ describe('Forge', () => {
       callerIds = [];
       caller = minterWallet;
 
-      cards = await new CardsFactory(ownerWallet).deploy(BATCH_SIZE, 'Test', 'TEST');
-      forge = await new ForgeFactory(ownerWallet).deploy(cards.address);
+      cards = await Cards.deploy(ownerWallet, BATCH_SIZE, 'Test', 'TEST');
+      forge = await Forge.deploy(ownerWallet, cards.address);
 
-      const season = await cards.functions.startSeason('Test', 1, 100);
+      const season = await cards.startSeason('Test', 1, 100);
       await season.wait();
 
-      const factory = await cards.functions.addFactory(ownerWallet.address, 1);
+      const factory = await cards.addFactory(ownerWallet.address, 1);
       await factory.wait();
 
-      const forgeFactory = await cards.functions.addFactory(forge.address, 1);
+      const forgeFactory = await cards.addFactory(forge.address, 1);
       await forgeFactory.wait();
 
-      const unlockTrading = await cards.functions.unlockTrading(1);
+      const unlockTrading = await cards.unlockTrading(1);
       await unlockTrading.wait();
     });
 
@@ -58,7 +58,7 @@ describe('Forge', () => {
         ids.push(i);
       }
 
-      const tx = await cards.functions.mintCards(minterWallet.address, protos, qualities);
+      const tx = await cards.mintCards(minterWallet.address, protos, qualities);
       await tx.wait();
 
       return ids;
@@ -67,13 +67,11 @@ describe('Forge', () => {
     async function subject(approve: boolean = true): Promise<any> {
       for (let i = 0; i < callerIds.length; i++) {
         if (approve) {
-          await new CardsFactory(caller)
-            .attach(cards.address)
-            .functions.approve(forge.address, callerIds[i]);
+          await Cards.at(caller, cards.address).approve(forge.address, callerIds[i]);
         }
       }
 
-      const tx = await new ForgeFactory(caller).attach(forge.address).functions.forge(callerIds);
+      const tx = await Forge.at(caller, forge.address).forge(callerIds);
       return await tx.wait();
     }
 
@@ -92,7 +90,7 @@ describe('Forge', () => {
     });
 
     it('should not be able to forge cards with different protos', async () => {
-      const tx = await cards.functions.mintCards(
+      const tx = await cards.mintCards(
         ownerWallet.address,
         [1, 1, 1, 1, 2],
         [4, 4, 4, 4, 4],
@@ -103,7 +101,7 @@ describe('Forge', () => {
     });
 
     it('should not be able to forge cards with different qualities', async () => {
-      const tx = await cards.functions.mintCards(
+      const tx = await cards.mintCards(
         ownerWallet.address,
         [1, 1, 1, 1, 1],
         [4, 4, 4, 4, 3],
@@ -121,39 +119,37 @@ describe('Forge', () => {
 
     it('should not be able to forge cards if the contract is locked', async () => {
       callerIds = await createCards(5, 1, 2);
-      await forge.functions.setLock(true);
+      await forge.setLock(true);
       await expectRevert(subject());
     });
 
     it('should be able to forge on behalf of someone else', async () => {
       callerIds = await createCards(5, 1, 2);
       caller = userWallet;
-      await new CardsFactory(minterWallet)
-        .attach(cards.address)
-        .functions.setApprovalForAll(userWallet.address, true);
+      await Cards.at(minterWallet, cards.address).setApprovalForAll(userWallet.address, true);
 
-      const beforeSupply = await cards.functions.totalSupply();
+      const beforeSupply = await cards.totalSupply();
       expect(beforeSupply.toNumber()).toEqual(5);
 
       await subject();
 
-      const details = await cards.functions.getDetails(0);
+      const details = await cards.getDetails(0);
       expect(details.quality).toBe(1);
-      const supply = await cards.functions.totalSupply();
+      const supply = await cards.totalSupply();
       expect(supply.toNumber()).toEqual(1);
     });
 
     it('should be able to forge exactly 5 cards', async () => {
       callerIds = await createCards(5, 1, 2);
 
-      const beforeSupply = await cards.functions.totalSupply();
+      const beforeSupply = await cards.totalSupply();
       expect(beforeSupply.toNumber()).toEqual(5);
 
       await subject();
 
-      const details = await cards.functions.getDetails(0);
+      const details = await cards.getDetails(0);
       expect(details.quality).toBe(1);
-      const supply = await cards.functions.totalSupply();
+      const supply = await cards.totalSupply();
       expect(supply.toNumber()).toEqual(1);
     });
   });

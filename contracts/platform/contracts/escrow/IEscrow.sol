@@ -1,7 +1,7 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 pragma experimental ABIEncoderV2;
 
-contract IEscrow {
+abstract contract IEscrow {
 
     struct Vault {
         address player;
@@ -24,7 +24,7 @@ contract IEscrow {
         Vault memory _vault,
         address _callbackTo,
         bytes memory _callbackData
-    ) public returns (uint256);
+    ) public virtual returns (uint256);
 
     /**
      * @dev Create a new escrow vault
@@ -32,7 +32,7 @@ contract IEscrow {
      * @param _vault the escrow vault to be created
      * @param _from the address from which to pull the tokens
      */
-    function escrow(Vault memory _vault, address _from) public returns (uint256);
+    function escrow(Vault memory _vault, address _from) public virtual returns (uint256);
 
     /**
      * @dev Release assets from an escrow account
@@ -40,7 +40,6 @@ contract IEscrow {
      * @param _id the id of the escrow vault
      * @param _to the address to which assets should be released
      */
-    function release(uint256 _id, address _to) public;
-
+    function release(uint256 _id, address _to) public virtual;
 
 }

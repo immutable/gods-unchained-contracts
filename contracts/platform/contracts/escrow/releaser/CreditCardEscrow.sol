@@ -1,10 +1,11 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 pragma experimental ABIEncoderV2;
 
 import "../IEscrow.sol";
+import "./ICreditCardEscrow.sol";
 import "@openzeppelin/contracts/ownership/Ownable.sol";
 
-contract CreditCardEscrow is Ownable {
+contract CreditCardEscrow is ICreditCardEscrow, Ownable {
 
     // Emitted when assets are escrowed
     event Escrowed(uint indexed id, address indexed owner, uint256 endBlock);
@@ -120,7 +121,7 @@ contract CreditCardEscrow is Ownable {
      *
      * @param _id The ID of the escrow account to be released
      */
-    function release(uint _id) public {
+    function release(uint _id) public override {
 
         Lock memory lock = locks[_id];
 
@@ -145,18 +146,18 @@ contract CreditCardEscrow is Ownable {
      *
      * @param _id The ID of the escrow account to be marked
      */
-    function requestRelease(uint _id, address _to) public onlyCustodian {
+    function requestRelease(uint _id, address _to) public override onlyCustodian {
 
         Lock storage lock = locks[_id];
 
-        require(lock.owner == address(0), "IM:CreditCardEscrow: escrow account is not custodial, call release directly");
+        uint256 releaseBlock = block.number + releaseDelay;
+
+        require(lock.owner == address(0), "IM:CreditCardEscrow: account is not custodial");
         require(lock.endBlock != 0, "IM:CreditCardEscrow: must be in escrow");
         require(lock.destructionBlock == 0, "IM:CreditCardEscrow: must not be marked for destruction");
         require(lock.releaseBlock == 0, "IM:CreditCardEscrow: must not be marked for release");
-        require(block.number + releaseDelay >= lock.endBlock, "IM:CreditCardEscrow: release period must end after escrow period");
+        require(releaseBlock >= lock.endBlock, "IM:CreditCardEscrow: release period must end after escrow period");
         require(_to != address(0), "IM:CreditCardEscrow: must release to a real user");
-
-        uint256 releaseBlock = block.number + releaseDelay;
 
         lock.releaseBlock = releaseBlock;
         lock.releaseTo = _to;
@@ -169,11 +170,11 @@ contract CreditCardEscrow is Ownable {
      *
      * @param _id The ID of the escrow account to be unmarked
      */
-    function cancelRelease(uint _id) public onlyCustodian {
+    function cancelRelease(uint _id) public override onlyCustodian {
 
         Lock storage lock = locks[_id];
 
-        require(lock.owner == address(0), "IM:CreditCardEscrow: escrow account is not custodial, call release directly");
+        require(lock.owner == address(0), "IM:CreditCardEscrow: escrow account is not custodial");
         require(lock.releaseBlock != 0, "IM:CreditCardEscrow: must be marked for release");
         require(lock.releaseBlock > block.number, "IM:CreditCardEscrow: release period must not have expired");
 
@@ -188,7 +189,7 @@ contract CreditCardEscrow is Ownable {
      *
      * @param _id The ID of the escrow account to be marked
      */
-    function requestDestruction(uint _id) public onlyDestroyer {
+    function requestDestruction(uint _id) public override onlyDestroyer {
 
         Lock storage lock = locks[_id];
 
@@ -208,7 +209,7 @@ contract CreditCardEscrow is Ownable {
      *
      * @param _id The ID of the escrow account to be unmarked
      */
-    function cancelDestruction(uint _id) public onlyDestroyer {
+    function cancelDestruction(uint _id) public override onlyDestroyer {
 
         Lock storage lock = locks[_id];
 
@@ -226,7 +227,7 @@ contract CreditCardEscrow is Ownable {
      *
      * @param _id The ID of the escrow account to be destroyed
      */
-    function destroy(uint _id) public onlyDestroyer {
+    function destroy(uint _id) public override onlyDestroyer {
 
         Lock memory lock = locks[_id];
 
@@ -254,7 +255,7 @@ contract CreditCardEscrow is Ownable {
         address _callbackTo,
         bytes memory _callbackData,
         uint256 _duration
-    ) public returns (uint) {
+    ) public override returns (uint) {
 
         require(_duration > 0, "IM:CreditCardEscrow: must be locked for a number of blocks");
         require(_vault.releaser == address(this), "IM:CreditCardEscrow: must be releasable by this contract");
@@ -267,7 +268,7 @@ contract CreditCardEscrow is Ownable {
         return id;
     }
 
-    function getProtocol() public view returns (IEscrow) {
+    function getProtocol() public override view returns (IEscrow) {
         return escrowProtocol;
     }
 

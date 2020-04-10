@@ -1,9 +1,10 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
+import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20Detailed.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract TradeToggleERC20 is ERC20, ERC20Detailed {
+contract TradeToggleERC20 is ERC20, ERC20Detailed, ERC20Burnable {
 
     event TradabilityChanged(bool tradable);
 
@@ -15,12 +16,12 @@ contract TradeToggleERC20 is ERC20, ERC20Detailed {
 
     }
 
-    function transfer(address to, uint256 amount) public returns (bool) {
+    function transfer(address to, uint256 amount) public override(ERC20, IERC20) returns (bool) {
         require(isTradable(), "tokens are not currently tradable");
         return super.transfer(to, amount);
     }
 
-    function transferFrom(address from, address to, uint256 amount) public returns (bool) {
+    function transferFrom(address from, address to, uint256 amount) public override(ERC20, IERC20) returns (bool) {
         require(isTradable(), "tokens are not currently tradable");
         return super.transferFrom(from, to, amount);
     }

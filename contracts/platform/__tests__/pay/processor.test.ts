@@ -1,6 +1,6 @@
 import 'jest';
 
-import { Pay, PayFactory } from '../../src/contracts';
+import { Pay } from '../../src/contracts';
 
 import { Blockchain, expectRevert, generatedWallets } from '@imtbl/test-utils';
 import { ethers, Wallet } from 'ethers';
@@ -27,7 +27,7 @@ describe('Pay', () => {
 
   describe('#constructor', () => {
     it('should be able to deploy the processor contract', async () => {
-      const processor = await new PayFactory(user).deploy();
+      const processor = await Pay.deploy(user);
     });
   });
 
@@ -36,11 +36,11 @@ describe('Pay', () => {
     let processor: Pay;
 
     beforeEach(async () => {
-      processor = await new PayFactory(user).deploy();
+      processor = await Pay.deploy(user);
     });
 
     async function setSignerLimit(sender: Wallet, signer: string, value: number) {
-      const p = new PayFactory(sender).attach(processor.address);
+      const p = Pay.at(sender, processor.address);
       await p.setSignerLimit(signer, value);
     }
 
@@ -60,12 +60,12 @@ describe('Pay', () => {
     let sku = keccak256('0x00');
 
     beforeEach(async () => {
-        processor = await new PayFactory(user).deploy();
+        processor = await Pay.deploy(user);
     });
 
     async function setSellerApproval(sender: Wallet, seller: string, shouldApprove: boolean) {
-        const p = new PayFactory(sender).attach(processor.address);
-        await p.functions.setSellerApproval(seller, [sku], shouldApprove);
+        const p = Pay.at(sender, processor.address);
+        await p.setSellerApproval(seller, [sku], shouldApprove);
     }
 
 

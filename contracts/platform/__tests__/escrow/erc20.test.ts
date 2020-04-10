@@ -1,6 +1,6 @@
 import 'jest';
 
-import { Escrow, TestERC20Token, TestChest, MaliciousChest, EscrowFactory, TestERC20TokenFactory, TestChestFactory, MaliciousChestFactory } from '../../src/contracts';
+import { Escrow, TestERC20Token, TestChest, MaliciousChest } from '../../src/contracts';
 
 import { Blockchain, expectRevert, generatedWallets } from '@imtbl/test-utils';
 import { ethers } from 'ethers';
@@ -30,7 +30,7 @@ describe('ERC20Escrow', () => {
 
   describe('#constructor', () => {
     it('should be able to deploy the escrow contract', async () => {
-      const escrow = await new EscrowFactory(user).deploy();
+      const escrow = await Escrow.deploy(user);
     });
   });
 
@@ -40,8 +40,8 @@ describe('ERC20Escrow', () => {
     let erc20: TestERC20Token;
 
     beforeEach(async() => {
-        escrow = await new EscrowFactory(user).deploy();
-        erc20 = await new TestERC20TokenFactory(user).deploy();
+        escrow = await Escrow.deploy(user);
+        erc20 = await TestERC20Token.deploy(user);
     })
 
     it('should be able able to escrow', async () => {
@@ -114,8 +114,8 @@ describe('ERC20Escrow', () => {
     let erc20: TestERC20Token;
 
     beforeEach(async() => {
-      escrow = await new EscrowFactory(user).deploy();
-      erc20 = await new TestERC20TokenFactory(user).deploy();
+      escrow = await Escrow.deploy(user);
+      erc20 = await TestERC20Token.deploy(user);
     })
 
     it('should be able to release as the releaser', async () => {
@@ -179,10 +179,10 @@ describe('ERC20Escrow', () => {
     let chest: TestChest;
 
     beforeEach(async() => {
-      escrow = await new EscrowFactory(user).deploy();
-      erc20 = await new TestERC20TokenFactory(user).deploy();
-      malicious = await new MaliciousChestFactory(user).deploy(escrow.address, erc20.address);
-      chest = await new TestChestFactory(user).deploy(escrow.address, erc20.address);
+      escrow = await Escrow.deploy(user);
+      erc20 = await TestERC20Token.deploy(user);
+      malicious = await MaliciousChest.deploy(user, escrow.address, erc20.address);
+      chest = await TestChest.deploy(user, escrow.address, erc20.address);
     });
 
     it('should be able to create a vault using a callback', async () => {

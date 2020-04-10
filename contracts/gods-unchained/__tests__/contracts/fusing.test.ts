@@ -1,11 +1,11 @@
 import 'jest';
 
 import { Blockchain, expectRevert, generatedWallets } from '@imtbl/test-utils';
-import { Cards, CardsWrapper } from '../../src';
+import { Cards, Fusing } from '../../src/contracts';
+import { CardsWrapper } from '../../src/wrappers';
 import { Wallet, ethers } from 'ethers';
 
 import { ContractReceipt } from 'ethers/contract';
-import { FusingFactory } from '../../src/generated/FusingFactory';
 import { parseLogs } from '@imtbl/utils';
 
 const provider = new ethers.providers.JsonRpcProvider();
@@ -30,12 +30,12 @@ describe('Fusing', () => {
 
     it('should be able to deploy correctly', async () => {
       const cards = await cardsWrapper.deployTest(ownerWallet.address);
-      const fusing = await new FusingFactory(ownerWallet).deploy(cards.address);
+      const fusing = await Fusing.deploy(ownerWallet, cards.address);
 
-      const returnedCardsAddress = await fusing.functions.cards();
+      const returnedCardsAddress = await fusing.cards();
       expect(returnedCardsAddress).toBe(cards.address);
 
-      const returnedOwnerAddress = await fusing.functions.owner();
+      const returnedOwnerAddress = await fusing.owner();
       expect(returnedOwnerAddress).toBe(ownerWallet.address);
     });
   });
@@ -51,18 +51,18 @@ describe('Fusing', () => {
       const cardsWrapper = new CardsWrapper(ownerWallet);
       cards = await cardsWrapper.deployTest(ownerWallet.address);
 
-      const fusingContract = await new FusingFactory(ownerWallet).deploy(cards.address);
+      const fusingContract = await Fusing.deploy(ownerWallet, cards.address);
       fusingAddress = fusingContract.address;
 
-      await cards.functions.addFactory(fusingAddress, 1);
+      await cards.addFactory(fusingAddress, 1);
 
       callerWallet = ownerWallet;
       callerMinterAddress = minterWallet.address;
     });
 
     async function subject(): Promise<ContractReceipt> {
-      const fusing = await new FusingFactory(callerWallet).attach(fusingAddress);
-      const tx = await fusing.functions.addMinter(callerMinterAddress);
+      const fusing = Fusing.at(callerWallet, fusingAddress);
+      const tx = await fusing.addMinter(callerMinterAddress);
 
       return await tx.wait();
     }
@@ -74,7 +74,7 @@ describe('Fusing', () => {
 
     it('should be able to add a minter with the event emitted', async () => {
       const receipt = await subject();
-      const parsed = parseLogs(receipt.logs, new FusingFactory().interface.abi);
+      const parsed = parseLogs(receipt.logs, Fusing.ABI);
 
       const returnedMinter = parsed[0].values.minter;
       expect(returnedMinter).toBe(minterWallet.address);
@@ -92,19 +92,19 @@ describe('Fusing', () => {
       const cardsWrapper = new CardsWrapper(ownerWallet);
       cards = await cardsWrapper.deployTest(ownerWallet.address);
 
-      const fusingContract = await new FusingFactory(ownerWallet).deploy(cards.address);
+      const fusingContract = await Fusing.deploy(ownerWallet, cards.address);
       fusingAddress = fusingContract.address;
 
-      await cards.functions.addFactory(fusingAddress, 1);
-      await fusingContract.functions.addMinter(minterWallet.address);
+      await cards.addFactory(fusingAddress, 1);
+      await fusingContract.addMinter(minterWallet.address);
 
       callerWallet = ownerWallet;
       callerMinterAddress = minterWallet.address;
     });
 
     async function subject(): Promise<ContractReceipt> {
-      const fusing = await new FusingFactory(callerWallet).attach(fusingAddress);
-      const tx = await fusing.functions.removeMinter(callerMinterAddress);
+      const fusing = Fusing.at(callerWallet, fusingAddress);
+      const tx = await fusing.removeMinter(callerMinterAddress);
 
       return await tx.wait();
     }
@@ -121,7 +121,7 @@ describe('Fusing', () => {
 
     it('should be able to remove a minter with the event emitted', async () => {
       const receipt = await subject();
-      const parsed = parseLogs(receipt.logs, new FusingFactory().interface.abi);
+      const parsed = parseLogs(receipt.logs, Fusing.ABI);
 
       const returnedMinter = parsed[0].values.minter;
       expect(returnedMinter).toBe(minterWallet.address);
@@ -142,11 +142,11 @@ describe('Fusing', () => {
       const cardsWrapper = new CardsWrapper(ownerWallet);
       cards = await cardsWrapper.deployTest(ownerWallet.address);
 
-      const fusingContract = await new FusingFactory(ownerWallet).deploy(cards.address);
+      const fusingContract = await Fusing.deploy(ownerWallet, cards.address);
       fusingAddress = fusingContract.address;
 
-      await cards.functions.addFactory(fusingAddress, 1);
-      await fusingContract.functions.addMinter(minterWallet.address);
+      await cards.addFactory(fusingAddress, 1);
+      await fusingContract.addMinter(minterWallet.address);
 
       callerWallet = minterWallet;
       callerProto = 1;
@@ -156,9 +156,9 @@ describe('Fusing', () => {
     });
 
     async function subject(): Promise<ContractReceipt> {
-      const fusing = await new FusingFactory(callerWallet).attach(fusingAddress);
+      const fusing = Fusing.at(callerWallet, fusingAddress);
 
-      const tx = await fusing.functions.fuse(
+      const tx = await fusing.fuse(
         callerProto,
         callerQuality,
         callerDestination,
@@ -197,7 +197,7 @@ describe('Fusing', () => {
       callerReferences = [3, 2, 1];
       const receipt = await subject();
 
-      const parsed = parseLogs(receipt.logs, new FusingFactory().interface.abi);
+      const parsed = parseLogs(receipt.logs, Fusing.ABI);
       console.log(parsed);
       const returnedOwner = parsed[0].values.owner;
       expect(returnedOwner).toBe(callerDestination);

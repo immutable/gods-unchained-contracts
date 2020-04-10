@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/ownership/Ownable.sol";
@@ -24,7 +24,7 @@ contract Pay is IPay, Ownable {
      * @param order the details of the order, supplied by an authorised seller
      * @param payment the details of the user's proposed payment
      */
-    function process(Order memory order, Payment memory payment) public payable returns (uint) {
+    function process(Order memory order, Payment memory payment) public override payable returns (uint) {
 
         require(order.sku != bytes32(0), "must have a set SKU");
         require(order.quantity > 0, "must have a valid quality");
@@ -58,7 +58,7 @@ contract Pay is IPay, Ownable {
 
     }
 
-    function _validateOrderPaymentMatch(Order memory order, Payment memory payment) internal {
+    function _validateOrderPaymentMatch(Order memory order, Payment memory payment) internal pure {
         require(payment.value >= order.totalPrice, "receipt value must be sufficient");
         require(payment.currency == Currency.USDCents, "receipt currency must match");
     }

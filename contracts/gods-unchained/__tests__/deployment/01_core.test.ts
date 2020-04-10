@@ -2,12 +2,9 @@ import 'jest';
 
 import {
   Cards,
-  CardsFactory,
   Fusing,
-  FusingFactory,
-  OpenMinter,
-  OpenMinterFactory,
-} from '../../src';
+  OpenMinter
+} from '../../src/contracts';
 import { Wallet, ethers } from 'ethers';
 
 import { getAddressBook } from '@imtbl/addresses';
@@ -26,9 +23,9 @@ describe('01_core', () => {
   let fusing: Fusing;
 
   beforeAll(async () => {
-    cards = await new CardsFactory(wallet).attach(addressBook.cardsAddress);
-    openMinter = await new OpenMinterFactory(wallet).attach(addressBook.openMinterAddress);
-    fusing = await new FusingFactory(wallet).attach(addressBook.fusingAddress);
+    cards = Cards.at(wallet, addressBook.cardsAddress);
+    openMinter = OpenMinter.at(wallet, addressBook.openMinterAddress);
+    fusing = Fusing.at(wallet, addressBook.fusingAddress);
   });
 
   it('should have deployed cards', async () => {

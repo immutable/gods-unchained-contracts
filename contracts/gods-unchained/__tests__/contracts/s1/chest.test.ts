@@ -2,10 +2,9 @@ import 'jest';
 
 import { Blockchain, expectRevert, generatedWallets } from '@imtbl/test-utils';
 import { 
-  Chest, ChestFactory,
-  Referral, ReferralFactory, Pay, CreditCardEscrow, CreditCardEscrowFactory, Escrow, EscrowFactory, PayFactory,
-  TestPack, TestPackFactory 
-} from '../../../src';
+  Chest, Referral, Pay, CreditCardEscrow, TestPack, Escrow
+} from '../../../src/contracts';
+
 import { ethers } from 'ethers';
 import { keccak256 } from 'ethers/utils';
 import { getETHPayment, getSignedPayment, Currency } from '@imtbl/platform/src/pay';
@@ -40,18 +39,22 @@ describe('Chest', () => {
     const rareChestPrice = 100;
 
     beforeEach(async () => {
-      pay = await new PayFactory(owner).deploy();
-      referral = await new ReferralFactory(owner).deploy();
-      pack = await new TestPackFactory(owner).deploy();
-      escrowProtocol = await new EscrowFactory(owner).deploy();
-      escrow = await new CreditCardEscrowFactory(owner).deploy(
+      referral = await Referral.deploy(owner);
+      chest = await Chest.deploy(owner);
+      pay = await Pay.deploy(owner);
+      referral = await Referral.deploy(owner);
+      pack = await TestPack.deploy(owner);
+      escrowProtocol = await Escrow.deploy(owner);
+      escrow = await CreditCardEscrow.deploy(
+        owner,
         escrowProtocol.address,
         ZERO_EX,
         100,
         ZERO_EX, 
         100
       );
-      chest = await new ChestFactory(owner).deploy(
+      chest = await new Chest.deploy(
+        owner,
         "GU: S1 Rare Chest",
         "GU:1:RC",
         0,
@@ -96,18 +99,20 @@ describe('Chest', () => {
     const rareChestPrice = 100;
 
     beforeEach(async () => {
-      pay = await new PayFactory(owner).deploy();
-      referral = await new ReferralFactory(owner).deploy();
-      pack = await new TestPackFactory(owner).deploy();
-      escrowProtocol = await new EscrowFactory(owner).deploy();
-      escrow = await new CreditCardEscrowFactory(owner).deploy(
+      pay = await Pay.deploy(owner);
+      referral = await Referral.deploy(owner);
+      pack = await TestPack.deploy(owner);
+      escrowProtocol = await Escrow.deploy(owner);
+      escrow = await CreditCardEscrow.deploy(
+        owner,
         escrowProtocol.address,
         ZERO_EX,
         100,
         ZERO_EX, 
         100
       );
-      chest = await new ChestFactory(owner).deploy(
+      chest = await Chest.deploy(
+        owner,
         "GU: S1 Rare Chest",
         "GU:1:RC",
         0,
@@ -172,18 +177,20 @@ describe('Chest', () => {
     const rarePackSKU = keccak256('0x00');
 
     beforeEach(async () => {
-      pay = await new PayFactory(owner).deploy();
-      referral = await new ReferralFactory(owner).deploy();
-      pack = await new TestPackFactory(owner).deploy();
-      escrowProtocol = await new EscrowFactory(owner).deploy();
-      escrow = await new CreditCardEscrowFactory(owner).deploy(
+      pay = await Pay.deploy(owner);
+      referral = await Referral.deploy(owner);
+      pack = await TestPack.deploy(owner);
+      escrowProtocol = await Escrow.deploy(owner);
+      escrow = await CreditCardEscrow.deploy(
+        owner,
         escrowProtocol.address,
         ZERO_EX,
         100,
         ZERO_EX, 
         100
       );
-      chest = await new ChestFactory(owner).deploy(
+      chest = await new Chest.deploy(
+        owner,
         "GU: S1 Rare Chest",
         "GU:1:RC",
         0,

@@ -1,13 +1,7 @@
-import { Cards, CardsFactory } from '..';
 import { asyncForEach, parseLogs } from '@imtbl/utils';
 
 import { Address } from '@imtbl/common-types';
-import { Fusing } from '../generated/Fusing';
-import { FusingFactory } from '../generated/FusingFactory';
-import { OpenMinter } from '../generated/OpenMinter';
-import { OpenMinterFactory } from '../generated/OpenMinterFactory';
-import { PromoFactory } from '../generated/PromoFactory';
-import { PromoFactoryFactory } from '../generated/PromoFactoryFactory';
+import { Fusing, OpenMinter, PromoFactory, Cards } from '../contracts';
 import { Wallet } from 'ethers';
 
 type Season = {
@@ -55,7 +49,8 @@ export class CardsWrapper {
     seasons: Season[] = [],
     factories: Factory[] = [],
   ): Promise<Cards> {
-    const unsignedTx = await new CardsFactory(this.wallet).getDeployTransaction(
+    const unsignedTx = Cards.getDeployTransaction(
+      this.wallet,
       batchSize,
       'Cards',
       'CARD',
@@ -65,7 +60,7 @@ export class CardsWrapper {
 
     const signedTx = await this.wallet.sendTransaction(unsignedTx);
     const receipt = await signedTx.wait();
-    this.instance = await new CardsFactory(this.wallet).attach(receipt.contractAddress);
+    this.instance = Cards.at(this.wallet, receipt.contractAddress);
 
     await this.addSeasons(seasons);
     await this.addFactories(factories);
@@ -102,7 +97,7 @@ export class CardsWrapper {
 
     const tx = await this.instance.functions.mintCards(to, protos, qualities);
     const receipt = await tx.wait();
-    const logs = parseLogs(receipt.logs, new CardsFactory().interface.abi);
+    const logs = parseLogs(receipt.logs, Cards.ABI);
 
     const results = logs
       .filter((item) => item.name === 'CardsMinted')
@@ -122,31 +117,32 @@ export class CardsWrapper {
   }
 
   async deployOpenMinter(cards: string): Promise<OpenMinter> {
-    const unsignedTx = await new OpenMinterFactory(this.wallet).getDeployTransaction(cards);
+    const unsignedTx = await OpenMinter.getDeployTransaction(this.wallet, cards);
     unsignedTx.nonce = await this.wallet.getTransactionCount();
     const signedTx = await this.wallet.sendTransaction(unsignedTx);
     const receipt = await signedTx.wait();
-    return await new OpenMinterFactory(this.wallet).attach(receipt.contractAddress);
+    return OpenMinter.at(this.wallet, receipt.contractAddress);
   }
 
   async deployFusing(cards: string): Promise<Fusing> {
-    const unsignedTx = await new FusingFactory(this.wallet).getDeployTransaction(cards);
+    const unsignedTx = Fusing.getDeployTransaction(this.wallet, cards);
     unsignedTx.nonce = await this.wallet.getTransactionCount();
     const signedTx = await this.wallet.sendTransaction(unsignedTx);
     const receipt = await signedTx.wait();
-    return new FusingFactory(this.wallet).attach(receipt.contractAddress);
+    return Fusing.at(this.wallet, receipt.contractAddress);
   }
+
 
   async deployPromoFactory(
     cards: string,
     minProto: number,
     maxProto: number,
   ): Promise<PromoFactory> {
-    const unsignedTx = await new PromoFactoryFactory(this.wallet).getDeployTransaction(cards);
+    const unsignedTx = PromoFactory.getDeployTransaction(this.wallet, cards);
     unsignedTx.nonce = await this.wallet.getTransactionCount();
     const signedTx = await this.wallet.sendTransaction(unsignedTx);
     const receipt = await signedTx.wait();
-    return new PromoFactoryFactory(this.wallet).attach(receipt.contractAddress);
+    return PromoFactory.at(this.wallet, receipt.contractAddress);
   }
 
   async unlockTrading(seasons: number[]): Promise<boolean> {

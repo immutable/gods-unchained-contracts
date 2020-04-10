@@ -1,7 +1,7 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 pragma experimental ABIEncoderV2;
 
-contract IPay {
+abstract contract IPay {
 
     enum Currency {
         ETH,
@@ -33,6 +33,6 @@ contract IPay {
         uint256 processed;
     }
 
-    function process(Order memory order, Payment memory payment) public payable returns (uint);
+    function process(Order memory order, Payment memory payment) public virtual payable returns (uint);
 
 }

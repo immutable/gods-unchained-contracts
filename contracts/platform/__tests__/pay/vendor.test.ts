@@ -1,9 +1,6 @@
 import 'jest';
 
-import { 
-    PayFactory, 
-    TestVendor, TestVendorFactory, Pay
-} from '../../src/contracts';
+import { TestVendor, Pay } from '../../src/contracts';
 
 import { Blockchain, expectRevert, generatedWallets } from '@imtbl/test-utils';
 import { ethers } from 'ethers';
@@ -31,8 +28,8 @@ describe('Vendor', () => {
 
   describe('#constructor', () => {
     it('should be able to deploy the vendor', async () => {
-      const pay = await new PayFactory(user).deploy();
-      const vendor = await new TestVendorFactory(user).deploy(pay.address);
+      const pay = await Pay.deploy(user);
+      const vendor = await TestVendor.deploy(user, pay.address);
     });
   });
 
@@ -43,8 +40,8 @@ describe('Vendor', () => {
     let sku = keccak256('0x00');
 
     beforeEach(async () => {
-        pay = await new PayFactory(user).deploy();
-        vendor = await new TestVendorFactory(user).deploy(pay.address);
+        pay = await Pay.deploy(user);
+        vendor = await TestVendor.deploy(user, pay.address);
     });
 
     async function processETHPayment(approved: boolean, qty: number, totalPrice: number, value: number) {
@@ -79,8 +76,8 @@ describe('Vendor', () => {
 
     beforeEach(async () => {
         nonce = 0;
-        pay = await new PayFactory(user).deploy();
-        vendor = await new TestVendorFactory(user).deploy(pay.address);
+        pay = await Pay.deploy(user);
+        vendor = await TestVendor.deploy(user, pay.address);
     });
 
     function getSimpleOrder(price: number): Order {

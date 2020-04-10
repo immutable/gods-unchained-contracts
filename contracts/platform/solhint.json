@@ -2,12 +2,8 @@
     "extends": "solhint:default",
     "plugins": [],
     "rules": {
-      "avoid-throw": true,
+      "avoid-throw": "error",
       "avoid-suicide": "error",
-      "avoid-sha3": "warn",
-      "max-line-length": [
-        "warning",
-        120
-      ]
+      "avoid-sha3": "warn"
     }
   }

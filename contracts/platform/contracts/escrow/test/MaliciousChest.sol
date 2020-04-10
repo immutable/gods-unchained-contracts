@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 pragma experimental ABIEncoderV2;
 
 import "../IEscrow.sol";
@@ -46,7 +46,7 @@ contract MaliciousChest {
 
     }
 
-    function emptyHook() public {
+    function emptyHook() public view {
         require(msg.sender == address(escrow), "must be the escrow contract");
     }
 
@@ -61,7 +61,7 @@ contract MaliciousChest {
         escrow.escrow(vault, address(this));
     }
 
-    function _createVault(uint256 count) internal returns (IEscrow.Vault memory) {
+    function _createVault(uint256 count) internal view returns (IEscrow.Vault memory) {
         return IEscrow.Vault({
             player: msg.sender,
             releaser: msg.sender,

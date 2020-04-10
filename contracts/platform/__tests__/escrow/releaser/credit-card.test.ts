@@ -1,11 +1,11 @@
 import 'jest';
 
 import { 
-    Escrow, EscrowFactory, 
-    TestERC20Token, TestERC20TokenFactory, 
-    CreditCardEscrowFactory, CreditCardEscrow, 
-    TestERC721Token, TestERC721TokenFactory,
-    TestCreditCardPack, TestCreditCardPackFactory
+    Escrow,
+    TestERC20Token, 
+    CreditCardEscrow, 
+    TestERC721Token,
+    TestCreditCardPack
 } from '../../../src/contracts';
 
 import { Blockchain, expectRevert, generatedWallets } from '@imtbl/test-utils';
@@ -15,6 +15,8 @@ const provider = new ethers.providers.JsonRpcProvider();
 const blockchain = new Blockchain();
 
 const ZERO_EX = '0x0000000000000000000000000000000000000000';
+
+ethers.errors.setLogLevel("error");
 
 describe('CreditCardEscrow', () => {
 
@@ -36,12 +38,13 @@ describe('CreditCardEscrow', () => {
 
   describe('#constructor', () => {
     it('should be able to deploy the escrow contract', async () => {
-      const protocol = await new EscrowFactory(user).deploy();
+      const protocol = await Escrow.deploy(user);
       const destroyer = user.address;
       const destructionDelay = 100;
       const custodian = user.address;
       const releaseDelay = 100;
-      const escrow = await new CreditCardEscrowFactory(user).deploy(
+      const escrow = await CreditCardEscrow.deploy(
+        user,
         protocol.address,
         destroyer,
         destructionDelay,
@@ -60,20 +63,22 @@ describe('CreditCardEscrow', () => {
     let pack: TestCreditCardPack;
 
     beforeEach(async() => {
-        erc20 = await new TestERC20TokenFactory(user).deploy();
-        erc721 = await new TestERC721TokenFactory(user).deploy();
-        escrow = await new EscrowFactory(user).deploy();
-        cc = await new CreditCardEscrowFactory(user).deploy(
-            escrow.address,
-            ZERO_EX, 
-            100,
-            ZERO_EX,
-            100
+        erc20 = await TestERC20Token.deploy(user);
+        erc721 = await TestERC721Token.deploy(user);
+        escrow = await Escrow.deploy(user);
+        cc = await CreditCardEscrow.deploy(
+          user,
+          escrow.address,
+          ZERO_EX, 
+          100,
+          ZERO_EX,
+          100
         );
-        pack = await new TestCreditCardPackFactory(user).deploy(
-            cc.address,
-            erc20.address,
-            erc721.address
+        pack = await TestCreditCardPack.deploy(
+          user,
+          cc.address,
+          erc20.address,
+          erc721.address
         );
     })
 
@@ -96,20 +101,22 @@ describe('CreditCardEscrow', () => {
     let pack: TestCreditCardPack;
 
     beforeEach(async() => {
-        erc20 = await new TestERC20TokenFactory(user).deploy();
-        erc721 = await new TestERC721TokenFactory(user).deploy();
-        escrow = await new EscrowFactory(user).deploy();
-        cc = await new CreditCardEscrowFactory(user).deploy(
-            escrow.address,
-            ZERO_EX, 
-            100,
-            ZERO_EX,
-            100
+      erc20 = await TestERC20Token.deploy(user);
+      erc721 = await TestERC721Token.deploy(user);
+      escrow = await Escrow.deploy(user);
+        cc = await CreditCardEscrow.deploy(
+          user,
+          escrow.address,
+          ZERO_EX, 
+          100,
+          ZERO_EX,
+          100
         );
-        pack = await new TestCreditCardPackFactory(user).deploy(
-            cc.address,
-            erc20.address,
-            erc721.address
+        pack = await TestCreditCardPack.deploy(
+          user,
+          cc.address,
+          erc20.address,
+          erc721.address
         );
     })
 
@@ -156,20 +163,22 @@ describe('CreditCardEscrow', () => {
     const releaseDelay = 100;
 
     beforeEach(async() => {
-        erc20 = await new TestERC20TokenFactory(user).deploy();
-        erc721 = await new TestERC721TokenFactory(user).deploy();
-        escrow = await new EscrowFactory(user).deploy();
-        cc = await new CreditCardEscrowFactory(user).deploy(
-            escrow.address,
-            destroyer.address, 
-            100,
-            custodian.address,
-            100
+      erc20 = await TestERC20Token.deploy(user);
+      erc721 = await TestERC721Token.deploy(user);
+      escrow = await Escrow.deploy(user);
+        cc = await CreditCardEscrow.deploy(
+          user,
+          escrow.address,
+          destroyer.address, 
+          100,
+          custodian.address,
+          100
         );
-        pack = await new TestCreditCardPackFactory(user).deploy(
-            cc.address,
-            erc20.address,
-            erc721.address
+        pack = await TestCreditCardPack.deploy(
+          user,
+          cc.address,
+          erc20.address,
+          erc721.address
         );
     })
 
@@ -238,20 +247,22 @@ describe('CreditCardEscrow', () => {
     const releaseDelay = 100;
 
     beforeEach(async() => {
-        erc20 = await new TestERC20TokenFactory(user).deploy();
-        erc721 = await new TestERC721TokenFactory(user).deploy();
-        escrow = await new EscrowFactory(user).deploy();
-        cc = await new CreditCardEscrowFactory(user).deploy(
-            escrow.address,
-            destroyer.address, 
-            destructionDelay,
-            custodian.address,
-            releaseDelay
+      erc20 = await TestERC20Token.deploy(user);
+      erc721 = await TestERC721Token.deploy(user);
+      escrow = await Escrow.deploy(user);
+        cc = await CreditCardEscrow.deploy(
+          user,
+          escrow.address,
+          destroyer.address, 
+          destructionDelay,
+          custodian.address,
+          releaseDelay
         );
-        pack = await new TestCreditCardPackFactory(user).deploy(
-            cc.address,
-            erc20.address,
-            erc721.address
+        pack = await TestCreditCardPack.deploy(
+          user,
+          cc.address,
+          erc20.address,
+          erc721.address
         );
     })
 
@@ -301,20 +312,22 @@ describe('CreditCardEscrow', () => {
     const releaseDelay = 100;
 
     beforeEach(async() => {
-        erc20 = await new TestERC20TokenFactory(user).deploy();
-        erc721 = await new TestERC721TokenFactory(user).deploy();
-        escrow = await new EscrowFactory(user).deploy();
-        cc = await new CreditCardEscrowFactory(user).deploy(
-            escrow.address,
-            destroyer.address, 
-            destructionDelay,
-            custodian.address,
-            releaseDelay
+      erc20 = await TestERC20Token.deploy(user);
+      erc721 = await TestERC721Token.deploy(user);
+      escrow = await Escrow.deploy(user);
+        cc = await CreditCardEscrow.deploy(
+          user,
+          escrow.address,
+          destroyer.address, 
+          destructionDelay,
+          custodian.address,
+          releaseDelay
         );
-        pack = await new TestCreditCardPackFactory(user).deploy(
-            cc.address,
-            erc20.address,
-            erc721.address
+        pack = await TestCreditCardPack.deploy(
+          user,
+          cc.address,
+          erc20.address,
+          erc721.address
         );
     })
 
@@ -358,21 +371,23 @@ describe('CreditCardEscrow', () => {
     const releaseDelay = 100;
 
     beforeEach(async() => {
-        erc20 = await new TestERC20TokenFactory(user).deploy();
-        erc721 = await new TestERC721TokenFactory(user).deploy();
-        escrow = await new EscrowFactory(user).deploy();
-        cc = await new CreditCardEscrowFactory(user).deploy(
-            escrow.address,
-            destroyer.address, 
-            100,
-            custodian.address,
-            100
-        );
-        pack = await new TestCreditCardPackFactory(user).deploy(
-            cc.address,
-            erc20.address,
-            erc721.address
-        );
+      erc20 = await TestERC20Token.deploy(user);
+      erc721 = await TestERC721Token.deploy(user);
+      escrow = await Escrow.deploy(user);
+      cc = await CreditCardEscrow.deploy(
+        user, 
+        escrow.address,
+        destroyer.address, 
+        100,
+        custodian.address,
+        100
+      );
+      pack = await TestCreditCardPack.deploy(
+        user,
+        cc.address,
+        erc20.address,
+        erc721.address
+      );
     })
 
     it('should be able to request release immediately', async () => {

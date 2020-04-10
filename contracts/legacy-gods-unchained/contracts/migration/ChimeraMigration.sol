@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "@imtbl/gods-unchained/contracts/factories/S3PromoFactory.sol";
 import "@openzeppelin/contracts/ownership/Ownable.sol";

@@ -2,8 +2,7 @@ import { Address } from '@imtbl/common-types';
 import 'jest';
 
 import { Blockchain, expectRevert, generatedWallets } from '@imtbl/test-utils';
-import { HydraTrinketFactory } from '../../src/generated/HydraTrinketFactory';
-import { HydraTrinket } from '../../src/generated/HydraTrinket';
+import { HydraTrinket } from '../../src/contracts';
 import { Wallet, ethers } from 'ethers';
 
 import { parseLogs } from '@imtbl/utils';
@@ -27,7 +26,7 @@ describe('Hydra Trinket', () => {
 
   describe('#constructor', () => {
     it('should be able to deploy', async () => {
-      const hydraTrinket = await new HydraTrinketFactory(ownerWallet).deploy('GU: Hydra', 'GU:HYDRA');
+      const hydraTrinket = await HydraTrinket.deploy(ownerWallet, 'GU: Hydra', 'GU:HYDRA');
     });
   })
 
@@ -38,15 +37,15 @@ describe('Hydra Trinket', () => {
     let callerWallet: Wallet;
 
     beforeEach(async () => {
-      hydraTrinket = await new HydraTrinketFactory(ownerWallet).deploy('GU: Hydra', 'GU:HYDRA');
-      hydraTrinket.setMinterStatus(minterWallet.address, true);
+      hydraTrinket = await HydraTrinket.deploy(ownerWallet, 'GU: Hydra', 'GU:HYDRA');
+      await hydraTrinket.setMinterStatus(minterWallet.address, true);
       callerDestination = userWallet.address;
       callerHeads = 1;
       callerWallet = minterWallet;
     });
 
     async function subject() {
-      const contract = await new HydraTrinketFactory(callerWallet).attach(hydraTrinket.address);
+      const contract = HydraTrinket.at(callerWallet, hydraTrinket.address);
       await contract.mint(callerDestination, callerHeads);
     }
 
@@ -57,7 +56,7 @@ describe('Hydra Trinket', () => {
 
     it('should be able to mint as a valid minter', async () => {
       await subject();
-      const supply = await hydraTrinket.functions.totalSupply();
+      const supply = await hydraTrinket.totalSupply();
       expect(supply.toNumber()).toBe(1);
     });
   });
@@ -67,15 +66,15 @@ describe('Hydra Trinket', () => {
     let callerWallet;
 
     beforeEach(async () => {
-      hydraTrinket = await new HydraTrinketFactory(ownerWallet).deploy('GU: Hydra', 'GU:HYDRA');
+      hydraTrinket = await HydraTrinket.deploy(ownerWallet, 'GU: Hydra', 'GU:HYDRA');
       await hydraTrinket.setMinterStatus(minterWallet.address, true);
       await hydraTrinket.mint(userWallet.address, 1);
       callerWallet = userWallet;
     });
 
     async function subject() {
-      const contract = await new HydraTrinketFactory(callerWallet).attach(hydraTrinket.address);
-      await contract.transferFrom(userWallet, ownerWallet, 0);
+      const contract = await HydraTrinket.at(callerWallet, hydraTrinket.address);
+      await contract.transferFrom(userWallet.address, ownerWallet.address, 1);
     }
 
     it('should not be able to transfer if trading has not been unlocked', async () => {
@@ -83,10 +82,10 @@ describe('Hydra Trinket', () => {
     });
 
     it('should be able to trade if trading unlocked', async () => {
-      await hydraTrinket.functions.setTradabilityStatus(true);
+      await hydraTrinket.setTradabilityStatus(true);
       await subject();
-      const balance = await hydraTrinket.functions.ownerOf(ownerWallet.address);
-      expect(balance).toBe(1);
+      const balance = await hydraTrinket.balanceOf(ownerWallet.address);
+      expect(balance.toNumber()).toBe(1);
     });
   });
 });

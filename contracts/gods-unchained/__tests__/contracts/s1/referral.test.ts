@@ -1,7 +1,7 @@
 import 'jest';
 
 import { Blockchain, generatedWallets } from '@imtbl/test-utils';
-import { Referral, ReferralFactory } from '../../../src';
+import { Referral } from '../../../src/contracts';
 import { Wallet, ethers } from 'ethers';
 
 const provider = new ethers.providers.JsonRpcProvider();
@@ -25,7 +25,7 @@ describe('Referral', () => {
     let referral: Referral;
 
     beforeEach(async () => {
-      referral = await new ReferralFactory(ownerWallet).deploy();
+      referral = await Referral.deploy(ownerWallet);
     });
 
     async function expectSplit(total: number, toVendor: number, toReferrer: number) {

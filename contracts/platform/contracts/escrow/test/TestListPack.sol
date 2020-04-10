@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 pragma experimental ABIEncoderV2;
 
 import "../IEscrow.sol";
@@ -24,9 +24,11 @@ contract TestListPack {
 
         IEscrow.Vault memory vault = _createVault(count);
 
-        uint256 id = purchases.push(Purchase({
+        purchases.push(Purchase({
             count: count
-        })) - 1;
+        }));
+
+        uint256 id = purchases.length - 1;
 
         bytes memory data = abi.encodeWithSignature("escrowHook(uint256)", id);
 
@@ -40,7 +42,7 @@ contract TestListPack {
         delete purchases[purchaseID];
     }
 
-    function _createVault(uint256 count) internal returns (IEscrow.Vault memory) {
+    function _createVault(uint256 count) internal view returns (IEscrow.Vault memory) {
 
         // predict token IDs
         uint[] memory ids = new uint[](count);

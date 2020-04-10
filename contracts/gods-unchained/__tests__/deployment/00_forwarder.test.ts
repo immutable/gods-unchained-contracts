@@ -1,6 +1,6 @@
 import 'jest';
 
-import { Forwarder, ForwarderFactory } from '../../src';
+import { Forwarder } from '../../src/contracts';
 import { Wallet, ethers } from 'ethers';
 
 import { getAddressBook } from '@imtbl/addresses';
@@ -17,7 +17,7 @@ describe('00_forwarder', () => {
   let forwarder: Forwarder;
 
   beforeAll(async () => {
-    forwarder = await new ForwarderFactory(wallet).attach(addressBook.forwarderAddress);
+    forwarder = Forwarder.at(wallet, addressBook.forwarderAddress);
   });
 
   it('should have a forwarder contract deployed', async () => {
@@ -26,17 +26,17 @@ describe('00_forwarder', () => {
   });
 
   it('should have the correct exchange address set', async () => {
-    const exchangeAddress = await forwarder.functions.ZERO_EX_EXCHANGE();
+    const exchangeAddress = await forwarder.ZERO_EX_EXCHANGE();
     expect(addressBook.zeroExExchangeAddress.toLowerCase()).toEqual(exchangeAddress.toLowerCase());
   });
 
   it('should have the correct 0x ERC20 proxy address set', async () => {
-    const erc20ProxyAddress = await forwarder.functions.ZERO_EX_TOKEN_PROXY();
+    const erc20ProxyAddress = await forwarder.ZERO_EX_TOKEN_PROXY();
     expect(addressBook.zeroExERC20ProxyAddress.toLowerCase()).toBe(erc20ProxyAddress.toLowerCase());
   });
 
   it('should have the correct WETH address set', async () => {
-    const wethAddress = await forwarder.functions.ETHER_TOKEN();
+    const wethAddress = await forwarder.ETHER_TOKEN();
     expect(addressBook.wethAddress.toLowerCase()).toBe(wethAddress.toLowerCase());
   });
 });

@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 pragma experimental ABIEncoderV2;
 
 import "../IEscrow.sol";
@@ -24,9 +24,11 @@ contract MaliciousBatchPack {
 
         IEscrow.Vault memory vault = _createVault(count);
 
-        uint256 id = purchases.push(Purchase({
+        purchases.push(Purchase({
             count: count
-        })) - 1;
+        }));
+
+        uint256 id = purchases.length - 1;
 
         bytes memory data = abi.encodeWithSignature("pushAttackHook(uint256)", id);
 
@@ -37,9 +39,11 @@ contract MaliciousBatchPack {
 
         IEscrow.Vault memory vault = _createVault(count);
 
-        uint256 id = purchases.push(Purchase({
+        purchases.push(Purchase({
             count: count
-        })) - 1;
+        }));
+
+        uint256 id = purchases.length - 1;
 
         bytes memory data = abi.encodeWithSignature("pullAttackHook(uint256)", id);
 
@@ -60,7 +64,7 @@ contract MaliciousBatchPack {
         delete purchases[purchaseID];
     }
 
-    function emptyHook() public {
+    function emptyHook() public view {
         require(msg.sender == address(escrow), "must be the escrow contract");
     }
 
@@ -78,7 +82,7 @@ contract MaliciousBatchPack {
         delete purchases[purchaseID];
     }
 
-    function _createVault(uint256 count) internal returns (IEscrow.Vault memory) {
+    function _createVault(uint256 count) internal view returns (IEscrow.Vault memory) {
         // predict what the token IDs will be
         uint256 low = asset.totalSupply();
         uint256 high = low + count;

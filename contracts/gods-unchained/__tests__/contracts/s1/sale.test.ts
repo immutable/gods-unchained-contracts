@@ -2,16 +2,14 @@ import 'jest';
 
 import { Blockchain, generatedWallets } from '@imtbl/test-utils';
 import {
-  Sale, SaleFactory, 
-  Escrow, EscrowFactory,
-  Beacon, BeaconFactory,
-  CreditCardEscrow, CreditCardEscrowFactory,
-  Referral, ReferralFactory,
-  RarePack, RarePackFactory,
-  EpicPack, EpicPackFactory,
-  LegendaryPack, LegendaryPackFactory,
-  ShinyPack, ShinyPackFactory, CardsFactory, Cards, Pay, PayFactory,
-} from '../../../src';
+  Sale,
+  Escrow, 
+  Beacon,
+  CreditCardEscrow, 
+  Referral, 
+  RarePack,
+  Pay, 
+} from '../../../src/contracts';
 import { Wallet, ethers } from 'ethers';
 import { keccak256 } from 'ethers/utils';
 
@@ -51,25 +49,27 @@ describe('Sale', () => {
     let rare: RarePack;
 
     beforeEach(async() => {
-        escrow = await new EscrowFactory(owner).deploy();
-        cc = await new CreditCardEscrowFactory(owner).deploy(
-            escrow.address,
-            ZERO_EX, 
-            100,
-            ZERO_EX,
-            100
+        escrow = await Escrow.deploy(owner);
+        cc = await CreditCardEscrow.deploy(
+          owner,
+          escrow.address,
+          ZERO_EX, 
+          100,
+          ZERO_EX,
+          100
         );
-        beacon = await new BeaconFactory(owner).deploy();
-        referral = await new ReferralFactory(owner).deploy();
-        processor = await new PayFactory(owner).deploy();
-        sale = await new SaleFactory(owner).deploy();
-        rare = await new RarePackFactory(owner).deploy(
-            beacon.address,
-            ZERO_EX,
-            rarePackSKU,
-            referral.address,
-            cc.address,
-            processor.address
+        beacon = await Beacon.deploy(owner);
+        referral = await Referral.deploy(owner);
+        processor = await Pay.deploy(owner);
+        sale = await Sale.deploy(owner);
+        rare = await RarePack.deploy(
+          owner,
+          beacon.address,
+          ZERO_EX,
+          rarePackSKU,
+          referral.address,
+          cc.address,
+          processor.address
         );
         await processor.setSellerApproval(rare.address, [rarePackSKU], true);
         await processor.setSignerLimit(owner.address, 1000000000000000);

@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/ownership/Ownable.sol";
@@ -38,7 +38,7 @@ contract Escrow is IEscrow, Ownable {
         Vault memory _vault,
         address _callbackTo,
         bytes memory _callbackData
-    ) public returns (uint256) {
+    ) public override returns (uint256) {
 
         require(!mutexLocked, "IM:Escrow: mutex must be unlocked");
         require(_vault.asset != address(0), "IM:Escrow: must be a non-null asset");
@@ -62,7 +62,8 @@ contract Escrow is IEscrow, Ownable {
         mutexLocked = false;
 
         if (_vault.balance > 0) {
-            require(IERC20(_vault.asset).balanceOf(address(this)).sub(preBalance) == _vault.balance, "IM:Escrow: must have transferred the tokens");
+            uint256 balanceDelta = IERC20(_vault.asset).balanceOf(address(this)).sub(preBalance);
+            require(balanceDelta == _vault.balance, "IM:Escrow: must have transferred the tokens");
         } else if (_vault.tokenIDs.length > 0) {
             require(_areAllInListEscrowed(_vault), "IM:Escrow: list must now be owned by escrow contract");
         } else if (_vault.highTokenID.sub(_vault.lowTokenID) > 0) {
@@ -78,7 +79,7 @@ contract Escrow is IEscrow, Ownable {
      * @param _vault the escrow vault to be created
      * @param _from the address from which to pull the tokens
      */
-    function escrow(Vault memory _vault, address _from) public returns (uint256) {
+    function escrow(Vault memory _vault, address _from) public override returns (uint256) {
         require(!mutexLocked, "IM:Escrow: mutex must be unlocked");
         require(_vault.asset != address(0), "IM:Escrow: must be a non-null asset");
         require(_vault.releaser != address(0), "IM:Escrow: must have a releaser");
@@ -102,7 +103,7 @@ contract Escrow is IEscrow, Ownable {
      * @param _id the id of the escrow vault
      * @param _to the address to which assets should be released
      */
-    function release(uint256 _id, address _to) public {
+    function release(uint256 _id, address _to) public override {
         Vault memory vault = vaults[_id];
         require(vault.releaser == msg.sender, "IM:Escrow: must be the releaser");
 
@@ -139,7 +140,8 @@ contract Escrow is IEscrow, Ownable {
     }
 
     function _escrow(Vault memory _vault) internal returns (uint256) {
-        uint256 id = vaults.push(_vault) - 1;
+        vaults.push(_vault);
+        uint256 id = vaults.length - 1;
         emit Escrowed(id, _vault);
         return id;
     }
@@ -173,7 +175,7 @@ contract Escrow is IEscrow, Ownable {
         return false;
     }
 
-    function _areAllInListEscrowed(Vault memory _vault) internal returns (bool) {
+    function _areAllInListEscrowed(Vault memory _vault) internal view returns (bool) {
         for (uint i = 0; i < _vault.tokenIDs.length; i++) {
             if (IERC721(_vault.asset).ownerOf(_vault.tokenIDs[i]) != address(this)) {
                 return false;
@@ -191,7 +193,7 @@ contract Escrow is IEscrow, Ownable {
         return false;
     }
 
-    function _areAllInBatchEscrowed(Vault memory _vault) internal returns (bool) {
+    function _areAllInBatchEscrowed(Vault memory _vault) internal view returns (bool) {
         for (uint i = _vault.lowTokenID; i < _vault.highTokenID; i++) {
             if (IERC721(_vault.asset).ownerOf(i) != address(this)) {
                 return false;

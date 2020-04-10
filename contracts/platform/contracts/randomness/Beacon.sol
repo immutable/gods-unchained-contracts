@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "./IBeacon.sol";
 
@@ -29,7 +29,7 @@ contract Beacon is IBeacon {
      *
      * @param _offset the offset from the current block of the block which will be used in our random seed
      */
-    function commit(uint256 _offset) public returns (uint256) {
+    function commit(uint256 _offset) public override returns (uint256) {
         require(block.number + _offset >= block.number, "IM:Beacon: must not overflow");
         uint256 commitBlock = block.number + _offset;
         if (!commitRequested[commitBlock]) {
@@ -44,7 +44,7 @@ contract Beacon is IBeacon {
      *
      * @param _commitBlock the block in question
      */
-    function callback(uint256 _commitBlock) public {
+    function callback(uint256 _commitBlock) public override {
 
         require(commitRequested[_commitBlock], "IM:Beacon: must have requested a callback on this block");
         require(block.number > _commitBlock, "IM:Beacon: cannot callback on the same block");
@@ -63,7 +63,7 @@ contract Beacon is IBeacon {
      *
      * @param _commitBlock the block in question
      */
-    function randomness(uint256 _commitBlock) public returns (bytes32) {
+    function randomness(uint256 _commitBlock) public override returns (bytes32) {
         uint256 currentBlock = getCurrentBlock(_commitBlock);
         if (blockHashes[currentBlock] == bytes32(0)) {
             callback(_commitBlock);
@@ -78,7 +78,7 @@ contract Beacon is IBeacon {
      * @param _commitBlock the original commit block
      * @param _offset the offset from current block of the block which will be used in our random seed
      */
-    function recommit(uint256 _commitBlock, uint256 _offset) public {
+    function recommit(uint256 _commitBlock, uint256 _offset) public override {
 
         require(commitRequested[_commitBlock], "IM:Beacon: original block must have requested a commit");
 

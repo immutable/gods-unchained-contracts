@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "@imtbl/gods-unchained/contracts/interfaces/ICards.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
