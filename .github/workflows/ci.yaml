@@ -33,6 +33,9 @@ jobs:
     - name: Docker Compose Logs
       run: docker-compose logs
 
+    - name: Docker Compose PS
+      run: docker-compose ps
+
     - name: Run tests
       run: yarn test
       env:
