@@ -1,5 +1,7 @@
 version: '3'
-
 services:
-  hello-world:
-    image: hello-world
+  ganache:
+    image: trufflesuite/ganache-cli:v6.9.0
+    ports:
+      - 8445:8545
+    command: ganache-cli --networkId 50 --accounts 20 -l 19000000 -e 10000000000 -m 'concert load couple harbor equip island argue ramp clarify fence smart topic'
