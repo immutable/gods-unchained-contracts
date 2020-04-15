@@ -24,9 +24,6 @@ jobs:
     - name: Bootstrap packages
       run: yarn lerna bootstrap
 
-    - name: Bootstrap packages
-      run: yarn lerna bootstrap
-
     - name: Setup repos
       run: yarn setup
 
