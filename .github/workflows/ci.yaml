@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: docker compose
+    - name: Docker Compose Up
       run: docker-compose up -d
 
     - name: Use Node.js
@@ -33,10 +33,13 @@ jobs:
     - name: Run linter
       run: yarn lint
 
+    - name: Docker Compose Logs
+      run: docker-compose logs
+
     - name: Run tests
       run: yarn test
       env:
         ETHERSCAN_KEY: 0
-        RPC_ENDPOINT: http://localhost:8445 
+        RPC_ENDPOINT: http://localhost:8445
         DEPLOYMENT_NETWORK_ID: 50
-        DEPLOYMENT_ENVIRONMENT: development 
+        DEPLOYMENT_ENVIRONMENT: development
