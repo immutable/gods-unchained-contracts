@@ -17,7 +17,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 11.15.0
-        
+
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
       run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -52,6 +52,9 @@ jobs:
       run: yarn test
       env:
         ETHERSCAN_KEY: 0
-        RPC_ENDPOINT: http://localhost:8445
+        RPC_ENDPOINT: http://localhost:8545
         DEPLOYMENT_NETWORK_ID: 50
         DEPLOYMENT_ENVIRONMENT: development
+
+    - name: Docker Compose Down
+      run: docker-compose down -v
