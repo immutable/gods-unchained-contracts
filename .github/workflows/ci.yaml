@@ -29,11 +29,14 @@ jobs:
 
     - name: Setup repos
       run: yarn setup
-      env:
-        ETHERSCAN_KEY: 0
 
     - name: Run linter
       run: yarn lint
 
-    # - name: Run tests
-    #   run: yarn test
+    - name: Run tests
+      run: yarn test
+      env:
+        ETHERSCAN_KEY: 0
+        RPC_ENDPOINT: http://localhost:8445 
+        DEPLOYMENT_NETWORK_ID: 50
+        DEPLOYMENT_ENVIRONMENT: development 
