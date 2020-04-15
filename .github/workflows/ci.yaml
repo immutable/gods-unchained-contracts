@@ -10,8 +10,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: docker ps
-      run: docker ps
+    - name: docker compose
+      run: docker-compose up
 
     - name: Use Node.js
       uses: actions/setup-node@v1
