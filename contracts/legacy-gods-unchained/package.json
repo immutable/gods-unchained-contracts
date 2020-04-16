@@ -16,8 +16,8 @@
     "generate-typings": "node scripts/generate-typings.js",
     "build": "yarn lint:sol && yarn truffle compile --all && yarn generate-typings && yarn tsc",
     "deploy": "yarn ts-node deployment/deploy.ts",
-    "test": "yarn build && yarn reset-test-evm && yarn jest __tests__/core --runInBand",
-    "test:watch": "yarn reset-test-evm && yarn jest __tests__/core --runInBand --watch",
+    "test": "yarn build && yarn reset-test-evm && yarn jest __tests__/ --runInBand",
+    "test:watch": "yarn reset-test-evm && yarn jest __tests__/ --runInBand --watch",
     "reset-test-evm": "node scripts/reset-test-evm.js"
   },
   "author": "",
