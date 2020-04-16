@@ -15,9 +15,6 @@
     "lint": "tslint -t verbose '__tests__/**/*.ts'",
     "generate-typings": "node scripts/generate-typings.js",
     "build": "yarn lint:sol && yarn truffle compile --all && yarn generate-typings && yarn tsc",
-    "test-legacy": "yarn etherlime test --solcVersion=0.5.11 --output=none --timeout=10000 --runs=200",
-    "test": "yarn build && yarn reset-test-evm && yarn jest __tests__/core --runInBand",
-    "test:watch": "yarn reset-test-evm && yarn jest __tests__/core --runInBand --watch",
     "reset-test-evm": "node scripts/reset-test-evm.js"
   },
   "author": "",
