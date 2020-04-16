@@ -1,5 +1,6 @@
 import { Address } from '@imtbl/common-types';
 import 'jest';
+jest.setTimeout(30000);
 
 import { Blockchain, expectRevert, generatedWallets } from '@imtbl/test-utils';
 import { HydraTrinketFactory } from './../../src/generated/HydraTrinketFactory';
@@ -33,7 +34,7 @@ describe('Hydra Trinket', () => {
 
     beforeEach(async () => {
       hydraTrinket = await new HydraTrinketFactory(ownerWallet).deploy('GU: Hydra', 'GU:HYDRA');
-      hydraTrinket.setMinterStatus(minterWallet.address, true);
+      await hydraTrinket.setMinterStatus(minterWallet.address, true);
       callerDestination = userWallet.address;
       callerHeads = 1;
       callerWallet = minterWallet;
@@ -69,7 +70,8 @@ describe('Hydra Trinket', () => {
 
     async function subject() {
       const contract = await new HydraTrinketFactory(callerWallet).attach(hydraTrinket.address);
-      await contract.functions.transferFrom(userWallet.address, ownerWallet.address, 1);
+      const tx = await contract.functions.transferFrom(userWallet.address, ownerWallet.address, 1);
+      return tx.wait();
     }
 
     it('should not be able to transfer if trading has not been unlocked', async () => {

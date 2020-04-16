@@ -3,6 +3,8 @@ import { GenericAssetFactory } from './../../src/generated/GenericAssetFactory';
 import { GenericAsset } from './../../src/generated/GenericAsset';
 import 'jest';
 
+jest.setTimeout(30000);
+
 import { Blockchain, expectRevert, generatedWallets } from '@imtbl/test-utils';
 import { Wallet, ethers } from 'ethers';
 
@@ -74,7 +76,8 @@ describe('Generic Asset', () => {
 
     async function subject() {
       const contract = await new GenericAssetFactory(callerWallet).attach(genericAsset.address);
-      await contract.functions.setTradabilityStatus(callerStatus);
+      const tx = await contract.functions.setTradabilityStatus(callerStatus);
+      return tx.wait();
     }
 
     it('should not be able to set trading status an unauthorised user', async () => {
@@ -88,7 +91,7 @@ describe('Generic Asset', () => {
     });
 
     it('should be able to set trading status as the owner', async () => {
-      callerWallet = userWallet;
+      callerWallet = ownerWallet;
       await subject();
       const tradingStatus = await genericAsset.functions.isTradable();
       expect(tradingStatus).toBeTruthy();

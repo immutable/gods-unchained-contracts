@@ -1,5 +1,7 @@
 import 'jest';
 
+jest.setTimeout(30000);
+
 import { Blockchain, expectRevert, generatedWallets } from '@imtbl/test-utils';
 import { Cards, CardsWrapper } from '../../src';
 import { Wallet, ethers } from 'ethers';
@@ -10,8 +12,6 @@ import { parseLogs } from '@imtbl/utils';
 
 const provider = new ethers.providers.JsonRpcProvider();
 const blockchain = new Blockchain();
-
-jest.setTimeout(10000);
 
 describe('Fusing', () => {
   const [ownerWallet, minterWallet, userWallet, unauthorisedWallet] = generatedWallets(provider);
@@ -198,7 +198,6 @@ describe('Fusing', () => {
       const receipt = await subject();
 
       const parsed = parseLogs(receipt.logs, new FusingFactory().interface.abi);
-      console.log(parsed);
       const returnedOwner = parsed[0].values.owner;
       expect(returnedOwner).toBe(callerDestination);
 

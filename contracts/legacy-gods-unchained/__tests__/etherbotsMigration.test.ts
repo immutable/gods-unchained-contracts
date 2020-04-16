@@ -1,5 +1,7 @@
 import 'jest';
 
+jest.setTimeout(30000);
+
 import { Blockchain, expectRevert, generatedWallets } from '@imtbl/test-utils';
 import { Wallet, ethers } from 'ethers';
 
@@ -101,7 +103,7 @@ describe('Core', () => {
       oldCardsAddress = oldCards.address;
       newCardsAddress = newCards.address;
       /* tslint:disable-next-line:align */
-    }, 10000);
+    });
 
     async function subject() {
       const etherbots = await new EtherbotsMigrationFactory(caller).attach(
@@ -182,7 +184,7 @@ describe('Core', () => {
       oldCardsAddress = oldCards.address;
       newCardsAddress = newCards.address;
       /* tslint:disable-next-line:align */
-    }, 10000);
+    });
 
     async function subject() {
       const etherbots = await new EtherbotsMigrationFactory(caller).attach(

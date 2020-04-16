@@ -3,6 +3,7 @@ import { GenesisBoardFactory } from './../../src/generated/GenesisBoardFactory';
 import { GenesisBoard } from './../../src/generated/GenesisBoard';
 
 import 'jest';
+jest.setTimeout(30000);
 
 import { Blockchain, expectRevert, generatedWallets } from '@imtbl/test-utils';
 import { Wallet, ethers } from 'ethers';

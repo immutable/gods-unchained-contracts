@@ -1,5 +1,7 @@
 import 'jest';
 
+jest.setTimeout(30000);
+
 import { Blockchain, expectRevert, generatedWallets } from '@imtbl/test-utils';
 import { CardIntegrationTwoFactory, ChimeraMigrationFactory } from '../src/contracts';
 import { CardsFactory, CardsWrapper, S3PromoFactoryFactory } from '@imtbl/gods-unchained';
@@ -93,7 +95,7 @@ describe('Core', () => {
       newCardsAddress = newCards.address;
       chimeraMigrationAddress = chimeraMigration.address;
       /* tslint:disable-next-line:align */
-    }, 10000);
+    });
 
     async function subject() {
       const chimera = await new ChimeraMigrationFactory(caller).attach(chimeraMigrationAddress);

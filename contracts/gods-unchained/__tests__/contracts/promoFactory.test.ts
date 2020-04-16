@@ -1,5 +1,7 @@
 import 'jest';
 
+jest.setTimeout(30000);
+
 import { Blockchain, expectRevert, generatedWallets } from '@imtbl/test-utils';
 import { Cards, CardsFactory, PromoFactory, PromoFactoryFactory } from '../../src';
 import { Wallet, ethers } from 'ethers';

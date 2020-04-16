@@ -1,5 +1,7 @@
 import 'jest';
 
+jest.setTimeout(30000);
+
 import { Cards, CardsFactory } from '../../src';
 
 import { ethers } from 'ethers';
