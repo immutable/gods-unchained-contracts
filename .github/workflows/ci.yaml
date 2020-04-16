@@ -10,9 +10,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Docker Compose Up
-      run: docker-compose up -d
-
     - name: Use Node.js
       uses: actions/setup-node@v1
       with:
@@ -30,31 +27,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-yarn-
 
-    - name: Install dependencies
-      run: yarn install
+    - name: Integration test
+      run: scripts/integration-test.sh
 
-    - name: Bootstrap packages
-      run: yarn lerna bootstrap
-
-    - name: Setup repos
-      run: yarn setup
-
-    - name: Run linter
-      run: yarn lint
-
-    - name: Docker Compose Logs
-      run: docker-compose logs
-
-    - name: Docker Compose PS
-      run: docker-compose ps
-
-    - name: Run tests
-      run: env && yarn test
-      env:
-        ETHERSCAN_KEY: 0
-        RPC_ENDPOINT: http://localhost:8545
-        DEPLOYMENT_NETWORK_ID: 50
-        DEPLOYMENT_ENVIRONMENT: development
-
-    - name: Docker Compose Down
-      run: docker-compose down -v
