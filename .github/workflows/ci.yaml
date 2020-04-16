@@ -49,7 +49,7 @@ jobs:
       run: docker-compose ps
 
     - name: Run tests
-      run: yarn test
+      run: env && yarn test
       env:
         ETHERSCAN_KEY: 0
         RPC_ENDPOINT: http://localhost:8545
