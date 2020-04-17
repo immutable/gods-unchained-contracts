@@ -35,10 +35,12 @@ export class DeploymentWrapper {
     unsignedTx.nonce = await this.wallet.getTransactionCount();
     const deployTx = await this.wallet.sendTransaction(unsignedTx);
     const receipt = await deployTx.wait();
-    return await factory.attach(receipt.contractAddress || ""); // TODO: [AN >> KK] tsc rejected prior version of this file because contractAddress could be undefined.... Think about how to handle that case
+    return await factory.attach(receipt.contractAddress || ''); // TODO: [AN >> KK] tsc rejected prior version of this file because contractAddress could be undefined.... Think about how to handle that case
   }
 
   async deployCore(delay: number = 0, modules: Module[]) {
+    await this.wallet.getTransactionCount();
+
     const walletImplementation = await this.deployWalletImplementation();
 
     const registry = await this.deployRegistry(delay);
@@ -57,6 +59,8 @@ export class DeploymentWrapper {
   }
 
   async deployWallet(factory: string, user: string, modules: string[]): Promise<string> {
+    await this.wallet.getTransactionCount();
+
     const salt = ethers.utils.solidityKeccak256(['string', 'address'], ['FACTORY_V1', user]);
     const x = await new FactoryFactory(this.wallet)
       .attach(factory)
