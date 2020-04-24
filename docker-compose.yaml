@@ -1,5 +1,11 @@
 version: '3'
 services:
+  dev:
+    build: ./dev-container
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: echo "start cli by running docker-compose run dev bash"
   ganache:
     image: trufflesuite/ganache-cli:v6.9.0
     ports:
