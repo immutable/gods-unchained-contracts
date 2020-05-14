@@ -81,4 +81,25 @@ describe('ETHUSDMockOracle', () => {
       expect(price).toEqual(new BigNumber(10).pow(14).mul(2));
     });
   });
+
+  describe('should be able to get the correct price at $50 @ 2 quantities', () => {
+    beforeAll(async () => {
+      await oracle.setPrice(new BigNumber(50).mul(100).mul(base));
+    });
+
+    it('should return the correct US cents', async () => {
+      const price = await oracle.convert(0, 1, 2);
+      expect(price.toString()).toEqual('10000');
+    });
+
+    it('should return the correct wei amount', async () => {
+      const price = await oracle.convert(1, 0, 2);
+      expect(price).toEqual(
+        new BigNumber(10)
+          .pow(14)
+          .mul(2)
+          .mul(2),
+      );
+    });
+  });
 });

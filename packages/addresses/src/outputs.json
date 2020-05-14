@@ -26,7 +26,26 @@
   },
   "3-development": {
     "human_friendly_name": "ropsten-development",
-    "addresses": {},
+    "addresses": {
+      "IM_Beacon": "0x0e15f4e0859a5d47f6E4059690370c2741bE7728",
+      "IM_Processor": "0x46Cc19BCEDe90817Cc482f7269a5B8C77EB80a33",
+      "IM_TestVendor": "0x2C002504BdCaF91E4df5fAb2515D2389A5D42Ba5",
+      "IM_Escrow": "0xc8BF76BF58873abC8C1Af2D13313C4F5C29796be",
+      "IM_Escrow_CreditCard": "0xCA5c5cB4b60B7e8ef1f35Aa8D8C1608a365226D8",
+      "GU_Forwarder": "0x90682687Ac6FE3D43E2fE64c1C2708b8B87B1C7f",
+      "GU_Cards": "0xaB45Ed94Ae0228BB1031F0Aec7D665B840d43996",
+      "GU_OpenMinter": "0xA30C6B0200B450aE03327817F2F903C491050bED",
+      "GU_Fusing": "0x4Efd125aa24EBAadDFCACeCDFEb2674a40835f84",
+      "GU_PromoFactory": "0x1f81e2452B7635E5C9E0D7A6eB7355D1c0d28903",
+      "GU_S1_Vendor": "0x68A8764Ba24Bc2b1a8894b31aFF08DcEdaAd2Ff0",
+      "GU_S1_Raffle": "0x2db05DAd1c16389D93c082480575b7DaBFDCe503",
+      "GU_S1_Sale": "0x052E0A4C0c0c9fFd1715309e90caec0f4C51d91D",
+      "GU_S1_Referral": "0x3e38bE3F515A2D0C5E4D40E6252c0b75D06ceab7",
+      "GU_S1_Epic_Pack": "0x5792080a97FfFBca3791b28A0432E249e23aCd10",
+      "GU_S1_Rare_Pack": "0x2836B23D02247f897b55e776F55B0C14cA8b8c79",
+      "GU_S1_Shiny_Pack": "0x1Aad2AE223BD1953bac2f8d5db7A9871fF2fF167",
+      "GU_S1_Legendary_Pack": "0x8c16facA495089be925F11bD3c8B8E31EF0cDbB1"
+    },
     "dependencies": {
       "ZERO_EX_EXCHANGE": "0xbff9493f92a3df4b0429b6d00743b3cfb4c85831",
       "ZERO_EX_ERC20_PROXY": "0xb1408f4c245a23c31b98d2c626777d4c0d766caa",
@@ -34,7 +53,8 @@
       "WETH": "0xc778417e063141139fce010982780140aa0cd5ab"
     },
     "state": {
-      "network_id": 3
+      "network_id": 3,
+      "last_deployment_stage": null
     }
   },
   "3-staging": {

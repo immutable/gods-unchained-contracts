@@ -17,8 +17,8 @@
     "build": "yarn lint:sol && yarn truffle compile && yarn generate-typings && yarn tsc",
     "deploy": "yarn ts-node deployment/deploy.ts",
     "test:deployment": "yarn build && yarn reset-test-evm && yarn jest __tests__/deployment --runInBand",
-    "test": "yarn build && yarn reset-test-evm && yarn jest __tests__/contracts --runInBand",
-    "test:watch": "yarn reset-test-evm && yarn jest __tests__/contracts --runInBand --watch",
+    "test": "yarn build && yarn reset-test-evm && yarn jest __tests__/contracts/ --runInBand",
+    "test:watch": "yarn reset-test-evm && yarn jest __tests__/contracts/ --runInBand --watch",
     "reset-test-evm": "node scripts/reset-test-evm.js",
     "prepare": "yarn build"
   },
@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@imtbl/addresses": "^2.0.0-alpha.5",
-    "@imtbl/isaac": "^0.0.5",
+    "@imtbl/isaac": "^0.0.8",
     "@imtbl/test-utils": "^1.0.14",
     "@types/jest": "^24.0.21",
     "@types/node": "^12.12.3",

@@ -19,7 +19,13 @@ import {
 
 import { Wallet, ethers } from 'ethers';
 import { ContractReceipt } from 'ethers/contract';
-import { getSignedPayment, Currency, Payment, ETHUSDMockOracle, getETHPayment } from '@imtbl/platform';
+import {
+  getSignedPayment,
+  Currency,
+  Payment,
+  ETHUSDMockOracle,
+  getETHPayment,
+} from '@imtbl/platform';
 import { Blockchain } from '@imtbl/test-utils';
 
 import {
@@ -206,20 +212,34 @@ describe('02_season_one', () => {
     });
 
     it('should be able to purchase an epic pack', async () => {
-      /// @TODO: Need to figure out why this is failing
-      const approved = await processor.sellerApproved(await epicPack.sku(), epicPack.address);
-      const approved2 = await processor.sellerApproved(await epicPack.sku(), s1Sale.address);
-      // expect(approved).toBeTruthy();
-      // expect(approved2).toBeTruthy();
-      const ethRequired = await oracle.convert(1, 0, epicCost);
-      // await s1Sale.purchase(
-      //   [{ quantity: defaultQuantity, vendor: epicPack.address, payment: getETHPayment() }],
-      //   ethers.constants.AddressZero,
-      //   { value: ethRequired },
-      // );
-      await epicPack.purchase(defaultQuantity, getETHPayment(), ethers.constants.AddressZero, {
-        value: ethRequired,
-      });
+      const epicEth = await oracle.convert(1, 0, epicCost);
+      const shinyEth = await oracle.convert(1, 0, shinyCost);
+      const legendaryEth = await oracle.convert(1, 0, legendaryCost);
+      const rareEth = await oracle.convert(1, 0, rareCost);
+
+      await s1Sale.purchase(
+        [{ quantity: defaultQuantity, vendor: epicPack.address, payment: getETHPayment() }],
+        ethers.constants.AddressZero,
+        { value: epicEth },
+      );
+
+      await s1Sale.purchase(
+        [{ quantity: defaultQuantity, vendor: shinyPack.address, payment: getETHPayment() }],
+        ethers.constants.AddressZero,
+        { value: shinyEth },
+      );
+
+      await s1Sale.purchase(
+        [{ quantity: defaultQuantity, vendor: rarePack.address, payment: getETHPayment() }],
+        ethers.constants.AddressZero,
+        { value: rareEth },
+      );
+
+      await s1Sale.purchase(
+        [{ quantity: defaultQuantity, vendor: legendaryPack.address, payment: getETHPayment() }],
+        ethers.constants.AddressZero,
+        { value: legendaryEth },
+      );
     });
   });
 

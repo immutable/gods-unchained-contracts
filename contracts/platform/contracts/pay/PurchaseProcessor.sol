@@ -116,10 +116,29 @@ contract PurchaseProcessor is IPurchaseProcessor, Ownable {
             "IM:PurchaseProcessor: must be approved to sell this product"
         );
 
+        // What is the order itself priced in
         if (order.currency == Currency.USDCents) {
-            _payUSD(order, payment);
+            // What currency is the payment given in
+            if (payment.currency == Currency.USDCents) {
+                // Pay USD via a signed receipt
+                _payUsdPricedInUsd(order, payment);
+            } else if (payment.currency == Currency.ETH) {
+                // Pay ETH directly
+                _payEthPricedInUsd(order, payment);
+            } else {
+                require(false, "IM:PurchaseProcessor: unknown currency");
+            }
         } else {
-            _payETH(order, payment);
+            // What currency is the payment given in
+            if (payment.currency == Currency.USDCents) {
+                // Pay USD via a signed receipt
+                _payUsdPricedInEth(order, payment);
+            } else if (payment.currency == Currency.ETH) {
+                // Pay ETH directly
+                _payEthPricedInEth(order, payment);
+            }  else {
+                require(false, "IM:PurchaseProcessor: unknown currency");
+            }
         }
 
         uint id = count++;
@@ -195,7 +214,7 @@ contract PurchaseProcessor is IPurchaseProcessor, Ownable {
         return ecrecover(recoveryHash, payment.v, payment.r, payment.s);
     }
 
-    function _payUSD(
+    function _payUsdPricedInUsd(
         Order memory _order,
         PaymentParams memory _payment
     )
@@ -215,7 +234,7 @@ contract PurchaseProcessor is IPurchaseProcessor, Ownable {
         _validateOrderPaymentMatch(_order, _payment);
     }
 
-    function _payETH(
+    function _payEthPricedInUsd(
         Order memory _order,
         PaymentParams memory _payment
     )
@@ -237,6 +256,67 @@ contract PurchaseProcessor is IPurchaseProcessor, Ownable {
 
         // solium-disable-next-line
         wallet.call.value(amount)("");
+
+        if (remaining > 0) {
+            // @TODO: Need to add re-entrency guards on remaining contracts.
+            address payable recipient = address(uint160(_order.recipient));
+            // solium-disable-next-line
+            recipient.call.value(remaining)("");
+        }
+
+        require(
+            address(this).balance == 0,
+            "IM:PurchaseProcessor: ETH left over"
+        );
+
+    }
+
+    function _payUsdPricedInEth(
+        Order memory _order,
+        PaymentParams memory _payment
+    )
+        internal
+    {
+        uint256 usdAmount = IOracle(priceOracle).convert(0, 1, _order.totalPrice);
+
+        address signer = _getSigner(_order, _payment);
+
+        _updateSignerLimit(signer, usdAmount);
+
+        require(
+            !receiptNonces[signer][_payment.nonce],
+            "IM:PurchaseProcessor: nonce must not be used"
+        );
+
+        receiptNonces[signer][_payment.nonce] = true;
+
+        require(
+        _payment.value >= usdAmount,
+            "IM:PurchaseProcessor: receipt value must be sufficient"
+        );
+
+        require(
+            _payment.currency == Currency.USDCents,
+            "IM:PurchaseProcessor: receipt currency must match"
+        );
+    }
+
+    function _payEthPricedInEth(
+        Order memory _order,
+        PaymentParams memory _payment
+    )
+        internal
+    {
+
+        require(
+            msg.value >= _order.totalPrice,
+            "IM:PurchaseProcessor: not enough ETH sent"
+        );
+
+        uint256 remaining = msg.value.sub(_order.totalPrice);
+
+        // solium-disable-next-line
+        wallet.call.value(_order.totalPrice)("");
 
         if (remaining > 0) {
             // @TODO: Need to add re-entrency guards on remaining contracts.

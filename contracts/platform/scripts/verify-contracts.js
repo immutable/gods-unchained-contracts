@@ -6,7 +6,7 @@ const { execSync } = require('child_process');
 const dotenv = require('dotenv');
 const config = dotenv.config({ path: '../../.env' }).parsed;
 
-const CONTRACT_NAMES = require('../../../packages/deployment/MAIN_CONTRACTS');
+const CONTRACT_NAMES = require('./MAIN_CONTRACTS');
 
 CONTRACT_NAMES.forEach((item) => {
   const root = addresses[`${config.DEPLOYMENT_NETWORK_ID}-${config.DEPLOYMENT_ENVIRONMENT}`];

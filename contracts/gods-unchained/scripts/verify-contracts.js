@@ -6,24 +6,29 @@ const { execSync } = require('child_process');
 const dotenv = require('dotenv');
 const config = dotenv.config({ path: '../../.env' }).parsed;
 
-const CONTRACT_NAMES = require('../../../packages/deployment/MAIN_CONTRACTS');
+const CONTRACT_NAMES = require('./MAIN_CONTRACTS');
 
-CONTRACT_NAMES.forEach((item) => {
+CONTRACT_NAMES.forEach((i) => {
+  const item = Object.entries(i)[0][0];
+  const value = Object.entries(i)[0][1];
+
   const root = addresses[`${config.DEPLOYMENT_NETWORK_ID}-${config.DEPLOYMENT_ENVIRONMENT}`];
   const address = root.addresses[item];
+  console.log(item, value);
+
   if (!address) {
     return;
   }
 
-  const buildPath = `./build/contracts/${item}.json`;
+  const buildPath = `./build/contracts/${value}.json`;
 
   let file = JSON.parse(fs.readFileSync(buildPath));
   file.networks[config.DEPLOYMENT_NETWORK_ID] = { address: address };
   file = JSON.stringify(file, null, 2);
   fs.writeFileSync(buildPath, file);
 
-  console.log(`${item} - ${address}`);
+  console.log(`${value} - ${address}`);
   execSync(
-    `truffle run verify ${item}@${address} --network ${root.human_friendly_name.split('-')[0]}`,
+    `truffle run verify ${value}@${address} --network ${root.human_friendly_name.split('-')[0]}`,
   );
 });

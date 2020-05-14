@@ -21,7 +21,7 @@ contract S1Vendor is SingleItemVendor {
         IPurchaseProcessor _pay
     ) public SingleItemVendor(
         _sku,
-        IPurchaseProcessor.Currency.ETH,
+        IPurchaseProcessor.Currency.USDCents,
         _price,
         _escrow,
         _pay

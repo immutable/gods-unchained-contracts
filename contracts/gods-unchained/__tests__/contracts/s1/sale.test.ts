@@ -4,8 +4,7 @@ import { Blockchain, generatedWallets } from '@imtbl/test-utils';
 import { S1Sale, Referral, RarePack, Raffle } from '../../../src/contracts';
 import { ethers } from 'ethers';
 import { keccak256 } from 'ethers/utils';
-import { PurchaseProcessor, CreditCardEscrow, Escrow, Beacon } from '@imtbl/platform/src/contracts';
-import { getSignedPayment, Currency } from '@imtbl/platform/src';
+import { PurchaseProcessor, CreditCardEscrow, Escrow, Beacon, getSignedPayment, Currency } from '@imtbl/platform';
 
 jest.setTimeout(600000);
 

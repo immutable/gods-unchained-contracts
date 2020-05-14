@@ -45,12 +45,12 @@ contract ETHUSDMockOracle is IOracle {
 
         // ETH = 0, USDCents = 1, ETH -> USD Cents
         if (from == 0 && to == 1) {
-            return price().div(10**16);
+            return price().div(10**16).mul(amount);
         }
 
         // ETH = 0, USDCents = 1, USD Cents -> ETH
         if (from == 1 && to == 0) {
-            return uint256(10**34).div(price());
+            return uint256(10**34).div(price()).mul(amount);
         }
     }
 

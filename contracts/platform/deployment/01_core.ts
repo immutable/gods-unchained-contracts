@@ -1,4 +1,3 @@
-
 import { Wallet, ethers } from 'ethers';
 import { DeploymentStage } from '@imtbl/deployment-utils';
 import { asyncForEach } from '@imtbl/utils';
@@ -65,26 +64,45 @@ export class CoreStage implements DeploymentStage {
 
   async deployBeacon(): Promise<string> {
     console.log('** Deploying Beacon **');
-    const contract = await Beacon.deploy(this.wallet);
-    return contract.address;
+    await this.wallet.getTransactionCount();
+    const unsignedTx = await Beacon.getDeployTransaction(this.wallet);
+    unsignedTx.nonce = await this.wallet.getTransactionCount();
+    const signedTx = await this.wallet.sendTransaction(unsignedTx);
+    const receipt = await signedTx.wait();
+    return receipt.contractAddress;
   }
 
   async deployProcessor(): Promise<string> {
     console.log('** Deploying PurchaseProcessor **');
-    const contract = await PurchaseProcessor.deploy(this.wallet, this.wallet.address);
-    return contract.address;
+    await this.wallet.getTransactionCount();
+    const unsignedTx = await PurchaseProcessor.getDeployTransaction(
+      this.wallet,
+      this.wallet.address,
+    );
+    unsignedTx.nonce = await this.wallet.getTransactionCount();
+    const signedTx = await this.wallet.sendTransaction(unsignedTx);
+    const receipt = await signedTx.wait();
+    return receipt.contractAddress;
   }
 
   async deploySimpleVendor(processor: string): Promise<string> {
     console.log('** Deploying TestVendor **');
-    const contract = await TestVendor.deploy(this.wallet, processor);
-    return contract.address;
+    await this.wallet.getTransactionCount();
+    const unsignedTx = await TestVendor.getDeployTransaction(this.wallet, processor);
+    unsignedTx.nonce = await this.wallet.getTransactionCount();
+    const signedTx = await this.wallet.sendTransaction(unsignedTx);
+    const receipt = await signedTx.wait();
+    return receipt.contractAddress;
   }
 
   async deployEscrow(): Promise<string> {
     console.log('** Deploying Escrow **');
-    const contract = await Escrow.deploy(this.wallet);
-    return contract.address;
+    await this.wallet.getTransactionCount();
+    const unsignedTx = await Escrow.getDeployTransaction(this.wallet);
+    unsignedTx.nonce = await this.wallet.getTransactionCount();
+    const signedTx = await this.wallet.sendTransaction(unsignedTx);
+    const receipt = await signedTx.wait();
+    return receipt.contractAddress;
   }
 
   async deployCreditCardEscrow(
@@ -95,7 +113,8 @@ export class CoreStage implements DeploymentStage {
     custodianDelay: number,
   ): Promise<string> {
     console.log('** Deploying CreditCardEscrow **');
-    const contract = await CreditCardEscrow.deploy(
+    await this.wallet.getTransactionCount();
+    const unsignedTx = await CreditCardEscrow.getDeployTransaction(
       this.wallet,
       escrow,
       destroyer,
@@ -104,11 +123,15 @@ export class CoreStage implements DeploymentStage {
       custodianDelay,
     );
 
-    return contract.address;
+    unsignedTx.nonce = await this.wallet.getTransactionCount();
+    const signedTx = await this.wallet.sendTransaction(unsignedTx);
+    const receipt = await signedTx.wait();
+    return receipt.contractAddress;
   }
 
   async setPaymentProcessorSigner(processor: string, signer: string) {
     console.log('*** Setting payment processor signer *** ');
+    await this.wallet.getTransactionCount();
     const contract = await PurchaseProcessor.at(this.wallet, processor);
     if ((await contract.signerLimits(signer)).total.toNumber() === 0) {
       console.log(`${signer} | $${IM_PROCESSOR_LIMIT / 100} LIMIT`);

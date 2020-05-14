@@ -14,7 +14,7 @@
         "lint": "lerna run lint",
         "build:platform": "yarn --cwd contracts/platform build",
         "build:gods-unchained": "yarn --cwd contracts/gods-unchained build",
-        "build:all": "yarn build:platform && yarn build:gods-unchained",
+        "build:all": "yarn build:platform && yarn build:gods-unchained && lerna bootstrap",
         "deploy:platform": "yarn --cwd contracts/platform deploy --all",
         "deploy:gods-unchained": "yarn --cwd contracts/gods-unchained deploy --all",
         "deploy:all": "yarn deploy:platform && yarn deploy:gods-unchained",

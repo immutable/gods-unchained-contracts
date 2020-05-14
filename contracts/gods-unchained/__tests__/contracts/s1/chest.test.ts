@@ -5,8 +5,7 @@ import { Chest, Referral, TestPack, Escrow } from '../../../src/contracts';
 
 import { ethers } from 'ethers';
 import { keccak256 } from 'ethers/utils';
-import { PurchaseProcessor, CreditCardEscrow } from '@imtbl/platform/src/contracts';
-import { getETHPayment, getSignedPayment, Currency } from '@imtbl/platform/src';
+import { PurchaseProcessor, CreditCardEscrow, getETHPayment, getSignedPayment, Currency } from '@imtbl/platform';
 
 const ZERO_EX = '0x0000000000000000000000000000000000000000';
 
