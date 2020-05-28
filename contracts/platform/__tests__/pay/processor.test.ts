@@ -26,7 +26,7 @@ describe('PurchaseProcessor', () => {
     });
   });
 
-  describe.only('#setSignerLimit', () => {
+  describe('#setSignerLimit', () => {
     let processor: PurchaseProcessor;
 
     beforeEach(async () => {
